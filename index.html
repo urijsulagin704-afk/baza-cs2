@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BAZA — CS2 сервера</title>
-<meta name="description" content="BAZA-CS2 — сервера Counter-Strike 2: паблик, ретейки, AWP, дуэли. Мониторинг онлайна, привилегии, кейсы.">
 <style>
   /* ================= ТВОИ СТИЛИ ================= */
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -174,928 +173,131 @@
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a href="#/" class="logo">BAZA</a>
-    <ul class="nav-links">
-      <li><div class="online-badge"><span id="navOnline">0</span>&nbsp;онлайн</div></li>
-      <li><a href="#/shop" data-route="/shop">👑 Донат</a></li>
-      <li><a href="#/admins" data-route="/admins">🎮 Админы</a></li>
-      <li><a href="#/rules" data-route="/rules">📜 Правила</a></li>
-      <li><a href="#/faq" data-route="/faq">❓ FAQ</a></li>
-      <li><a href="#/bans" data-route="/bans">🛡️ Баны</a></li>
-    </ul>
-    <div class="nav-actions">
-      <button class="btn btn-orange" onclick="showToast('Функция в разработке', 'error')">💰 Пополнить</button>
-      <button class="btn btn-purple" onclick="showToast('Функция в разработке', 'error')">🔑 Войти</button>
-    </div>
-  </div>
-</nav>
-
-<main id="page-root" class="main-container"></main>
-
-<!-- ЧАТ -->
-<div class="chat-widget" id="chatWidget">
-  <div class="chat-header">
-    <div class="chat-title"><div class="chat-status-dot"></div> Поддержка BAZA</div>
-    <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть чат">×</button>
-  </div>
-  <div class="chat-messages" id="chatMessages"></div>
-  <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="Сообщение..." onkeydown="if (event.key === 'Enter') sendChatMessage()">
-    <button onclick="sendChatMessage()" aria-label="Отправить">➤</button>
-  </div>
-</div>
-<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Чат поддержки">💬</button>
-
-<!-- МОДАЛКА ЗАКАЗА -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="Закрыть">×</button>
-    <h3>Оформление заказа</h3>
-    <div class="plan-tag" id="modalPlan">—</div>
-    <label for="orderSteam">Ваш Steam ID или ссылка на профиль</label>
-    <input type="text" placeholder="STEAM_0:1:12345678" id="orderSteam">
-    <label for="orderContact">Способ связи</label>
-    <input type="text" placeholder="@username в Telegram" id="orderContact">
-    <label for="orderPeriod">Срок</label>
-    <select id="orderPeriod" onchange="updateModalPrice()">
-      <option value="1">1 месяц</option>
-      <option value="3">3 месяца (−10%)</option>
-    </select>
-    <button class="btn btn-primary" onclick="submitOrder()">Оформить через поддержку</button>
-    <div class="modal-note">Онлайн-оплата пока не подключена. Заказ оформляется через поддержку в Telegram.</div>
-  </div>
-</div>
-
-<!-- РУЛЕТКА -->
-<div id="caseModal">
-  <div class="roulette-wrap">
-    <div class="roulette-header">
-      <div class="title">ОТКРЫТИЕ КЕЙСА</div>
-      <div class="case-name" id="rouletteCaseName">—</div>
-    </div>
-    <div class="roulette-track-wrap">
-      <div class="roulette-pointer"></div>
-      <div class="roulette-track" id="rouletteTrack"></div>
-    </div>
-    <div class="roulette-result" id="rouletteResult">
-      <div class="result-card" id="resultCard">
-        <div class="res-emoji" id="resEmoji"></div>
-        <div class="res-name" id="resName"></div>
-        <div class="res-rarity" id="resRarity"></div>
+  <!-- НАВИГАЦИЯ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo">BAZA</a>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Главная</a></li>
+        <li><a href="#">Магазин</a></li>
+        <li><a href="#">Правила</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="online-badge">Онлайн: 142</div>
+        <a href="#" class="btn btn-primary">Войти</a>
       </div>
-      <div class="result-note">Демо-режим: автоматическая выдача призов пока не подключена.</div>
     </div>
-    <div class="roulette-actions">
-      <button class="btn btn-primary" id="closeCaseBtn" onclick="closeCaseModal()" style="display:none;">Закрыть</button>
+  </nav>
+
+  <div class="main-container">
+    <!-- ВЕРХНИЕ БАННЕРЫ -->
+    <div class="top-banners">
+      <div class="banner-card">
+        <div><h3>Telegram</h3><p>Подпишись на новости</p></div>
+        <div class="banner-icon tg-icon"></div>
+      </div>
+      <div class="banner-card">
+        <div><h3>Discord</h3><p>Общайся с игроками</p></div>
+        <div class="banner-icon dc-icon"></div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<script>
-/* =====================================================================
-   НАСТРОЙКИ И ДАННЫЕ. Чтобы что-то поменять на сайте, правьте этот блок.
-   ===================================================================== */
-
-// Ссылки: замените на свои
-const CONFIG = {
-  telegram: 'https://t.me/baza_cs2',      // Telegram-канал
-  discord:  'https://discord.gg/baza',    // приглашение в Discord
-  support:  'https://t.me/baza_support',  // куда писать по покупкам и вопросам
-};
-
-// Серверы. Порты, кроме первого, указаны для примера: поставьте настоящие.
-// players/max пока задаются вручную: живой онлайн требует бэкенда.
-// bg: public | retake | awp | fun | sand | duels
-const SERVERS = [
-  { name: 'Public #1', ip: '185.230.140.77:27015', bg: 'public', players: 18, max: 32 },
-  { name: 'Retake #1', ip: '185.230.140.77:27016', bg: 'retake', players: 9,  max: 10 },
-  { name: 'AWP Only',  ip: '185.230.140.77:27017', bg: 'awp',    players: 12, max: 20 },
-  { name: 'FUN',       ip: '185.230.140.77:27018', bg: 'fun',    players: 9,  max: 20 },
-  { name: 'Sandstone', ip: '185.230.140.77:27019', bg: 'sand',   players: 9,  max: 20 },
-  { name: 'Duels',     ip: '185.230.140.77:27020', bg: 'duels',  players: 0,  max: 10 },
-];
-
-// Привилегии. Цены и возможности задаются только здесь.
-const PLANS = [
-  { id: 'vip', name: 'VIP', icon: '👑', price: 199, desc: 'Базовый набор привилегий', btn: 'btn-outline',
-    features: ['Префикс [VIP] в чате', 'Цветной ник', 'Доступ к VIP-скинам', '+50 HP при респавне'] },
-  { id: 'premium', name: 'PREMIUM', icon: '💎', price: 499, desc: 'Максимум возможностей', btn: 'btn-primary',
-    features: ['Всё из VIP', 'Анимированный префикс', 'Смена ника 1 раз в день', '+100 HP и брони'] },
-  { id: 'admin', name: 'ADMIN', icon: '🛡️', price: 999, desc: 'Стань админом сервера', btn: 'btn-outline',
-    features: ['Всё из PREMIUM', 'Модерация (/ban, /kick)', 'Тег [ADMIN] в чате', 'Смена карты (/map)'] },
-];
-
-// Топ донатеров по периодам. color: gold | purple | blue
-const DONATORS = {
-  '7': [
-    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'PREMIUM' },
-    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'purple', desc: 'VIP' },
-    { name: 'geminikim183', avatar: '🙂', color: 'blue', desc: 'VIP' },
-  ],
-  '30': [
-    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'ADMIN' },
-    { name: 'geminikim183', avatar: '🙂', color: 'purple', desc: 'PREMIUM' },
-    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'blue', desc: 'VIP' },
-  ],
-  'all': [
-    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'ADMIN' },
-    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'purple', desc: 'PREMIUM' },
-    { name: 'geminikim183', avatar: '🙂', color: 'blue', desc: 'PREMIUM' },
-  ],
-};
-
-// Слайды на главной
-const SLIDES = [
-  { title: 'Магазин привилегий', text: 'Приобрети привилегию на нужном сервере и наслаждайся игрой с бонусами!', link: '#/shop', btn: '↗ За покупками' },
-  { title: 'Бесплатный кейс', text: 'Каждые 2 часа — бесплатная прокрутка рулетки.', link: '#/shop?cases', btn: '🎁 К кейсам' },
-  { title: 'Наш Telegram', text: 'Новости, розыгрыши и ваучеры — первыми в нашем канале.', link: CONFIG.telegram, btn: '✈️ Подписаться', external: true },
-];
-
-const RULES = [
-  'Подключаясь к игровым серверам проекта BAZA-CS2 или посещая официальный сайт проекта, вы автоматически соглашаетесь с данными правилами и обязуетесь их соблюдать.',
-  'Правила проекта обязательны для всех игроков вне зависимости от возраста, пола, национальности, уровня привилегий или вероисповедания.',
-  'Игроком считается любое лицо, подключившееся к игровому серверу. Администрация наравне с игроками с привилегиями несёт ответственность за нарушения правил.',
-  'Руководство проекта BAZA-CS2 оставляет за собой право заблокировать аккаунт участника или доступ к Discord-серверу проекта в целях поддержания порядка, даже при отсутствии прямого нарушения сформулированных правил, если поведение участника угрожает комьюнити.',
-  'Правила действуют на всех игровых серверах проекта BAZA-CS2 без исключений.',
-  'Администрация вправе применять наказания без предварительного предупреждения, если нарушение очевидно или носит грубый характер.',
-  'Высшая администрация оставляет за собой право в исключительном порядке заблокировать игрока без объяснения причин.',
-];
-
-const ADMINS = [
-  { name: 'Vitalik_CS', role: 'Главный администратор', badge: 'OWNER' },
-  { name: 'Andrey',     role: 'Старший админ',         badge: 'SR.ADMIN' },
-  { name: 'MaxPower',   role: 'Модератор',             badge: 'ADMIN' },
-  { name: 'Kseniya',    role: 'Модератор',             badge: 'ADMIN' },
-];
-
-// type: permanent | temp
-const BANS = [
-  { name: 'NikitkaPro', reason: 'Wallhack',    admin: 'Andrey',  date: '2025-11-20', type: 'permanent', term: 'Навсегда' },
-  { name: 'ToxicBoy',   reason: 'Оскорбления', admin: 'Kseniya', date: '2025-11-18', type: 'temp',      term: '7 дней' },
-];
-
-const FAQS = [
-  { q: 'Как зайти на сервер?', a: `Нажми на карточку сервера на главной или введи в консоли CS2: <code>connect ${SERVERS[0].ip}</code>` },
-  { q: 'Как работают кейсы?', a: 'Бесплатный кейс можно открыть раз в 2 часа. Платные кейсы появятся после подключения оплаты.' },
-  { q: 'Как купить привилегию?', a: `Выбери привилегию в разделе «Донат» и оформи заказ через поддержку: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support}</a>` },
-];
-
-// Редкости: название и вес (чем больше вес, тем чаще выпадает)
-const RARITIES = {
-  consumer:   { name: 'Ширпотреб',     weight: 40 },
-  industrial: { name: 'Промышленное',  weight: 25 },
-  milspec:    { name: 'Армейское',     weight: 18 },
-  restricted: { name: 'Запрещённое',   weight: 10 },
-  classified: { name: 'Засекреченное', weight: 5 },
-  covert:     { name: 'Тайное',        weight: 1.5 },
-  rare:       { name: 'Редкое',        weight: 0.5 },
-};
-
-const FREE_CASE = {
-  name: 'Бесплатный кейс',
-  items: [
-    { name: 'P250 | Sand Dune', emoji: '🔫', rarity: 'consumer' },
-    { name: 'Скидка 20%',       emoji: '🏷️', rarity: 'milspec' },
-    { name: 'AK-47 | Redline',  emoji: '🔫', rarity: 'classified' },
-    { name: 'M4A4 | Howl',      emoji: '🔫', rarity: 'covert' },
-    { name: 'AWP | Asiimov',    emoji: '🎯', rarity: 'covert' },
-    { name: 'VIP на 3 дня',     emoji: '👑', rarity: 'rare' },
-  ],
-};
-
-const PAID_CASES = [
-  { name: 'Bronze Case',    emoji: '📦', price: 99 },
-  { name: 'Silver Case',    emoji: '🥈', price: 299 },
-  { name: 'Gold Case',      emoji: '🥇', price: 799 },
-  { name: 'Legendary Case', emoji: '💎', price: 1999 },
-];
-
-const FREE_CASE_COOLDOWN = 2 * 60 * 60 * 1000;
-const FREE_CASE_KEY = 'baza_free_case_last_open';
-
-/* =====================================================================
-   ШАБЛОНЫ
-   ===================================================================== */
-const $ = (id) => document.getElementById(id);
-
-function escapeHtml(text) {
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return String(text).replace(/[&<>"']/g, (m) => map[m]);
-}
-
-function renderServer(s) {
-  const status = s.players === 0
-    ? 'empty'
-    : (s.players >= s.max ? 'full' : '');
-
-  const percent = Math.min(100, Math.round((s.players / s.max) * 100));
-
-  let badge = '';
-
-  if (s.players >= s.max) {
-    badge = '<span class="server-badge full">FULL</span>';
-  } else if (s.players >= s.max * 0.7) {
-    badge = '<span class="server-badge hot">HOT</span>';
-  }
-
-  return `
-    <a
-      class="server-card"
-      href="steam://connect/${escapeHtml(s.ip)}"
-      title="Подключиться: ${escapeHtml(s.ip)}"
-    >
-      <div class="server-bg bg-${escapeHtml(s.bg)}"></div>
-
-      <div class="server-content">
-        <div>
-          <div class="server-topline">
-            <div class="server-title">${escapeHtml(s.name)}</div>
-            ${badge}
+    <!-- ЦЕНТРАЛЬНЫЙ БЛОК -->
+    <div class="middle-grid">
+      <!-- Топ донатеров -->
+      <div class="donators-card">
+        <div class="donators-header">Топ донатеров</div>
+        <div class="donator-item">
+          <div class="donator-avatar">👑</div>
+          <div class="donator-info">
+            <div class="donator-name gold">Player1</div>
+            <div class="donator-desc">VIP статус</div>
           </div>
-
-          <div class="server-map">
-            CS2 · ${escapeHtml(s.ip)}
-          </div>
+          <div class="donator-rank">1</div>
         </div>
-
-        <div class="server-bottom">
-          <div class="server-connect">▶ Подключиться</div>
-
-          <div class="server-status ${status}">
-            ${s.players}/${s.max}
+        <div class="donator-item">
+          <div class="donator-avatar">🔥</div>
+          <div class="donator-info">
+            <div class="donator-name purple">NoobMaster</div>
+            <div class="donator-desc">Premium</div>
           </div>
-
-          <div class="server-progress">
-            <span style="width:${percent}%"></span>
-          </div>
+          <div class="donator-rank">2</div>
         </div>
       </div>
 
-      <button
-        class="server-copy"
-        onclick="copyServerIp(event, '${escapeHtml(s.ip)}')"
-        title="Скопировать IP"
-        aria-label="Скопировать IP"
-      >⧉</button>
-    </a>
-  `;
-}
-function getTotalOnline() {
-  return SERVERS.reduce((sum, server) => sum + server.players, 0);
-}
-
-function getTotalSlots() {
-  return SERVERS.reduce((sum, server) => sum + server.max, 0);
-}
-
-function getMostPopularServer() {
-  return SERVERS.reduce((best, server) => {
-    return server.players > best.players ? server : best;
-  }, SERVERS[0]);
-}
-
-function copyServerIp(event, ip) {
-  event.preventDefault();
-  event.stopPropagation();
-
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(ip)
-      .then(() => showToast(`IP скопирован: ${ip}`))
-      .catch(() => showToast(ip));
-
-    return;
-  }
-
-  const input = document.createElement('textarea');
-  input.value = ip;
-  input.style.position = 'fixed';
-  input.style.opacity = '0';
-
-  document.body.appendChild(input);
-  input.select();
-
-  try {
-    document.execCommand('copy');
-    showToast(`IP скопирован: ${ip}`);
-  } catch (error) {
-    showToast(ip);
-  }
-
-  input.remove();
-}
-
-function renderNetworkOverview() {
-  const online = getTotalOnline();
-  const slots = getTotalSlots();
-  const popular = getMostPopularServer();
-  const onlinePercent = slots
-    ? Math.round((online / slots) * 100)
-    : 0;
-
-  return `
-    <section class="network-overview card-base">
-      <div class="network-overview-content">
-        <div class="network-kicker">BAZA NETWORK 2.0</div>
-
-        <div class="network-heading">
-          <div>
-            <h2>Играй. Поднимайся. Доминируй.</h2>
-            <p>Главный Counter-Strike 2 хаб проекта BAZA-CS2</p>
-          </div>
-
-          <div class="network-live">СЕТЬ РАБОТАЕТ</div>
-        </div>
-
-        <div class="network-stats">
-          <div class="network-stat">
-            <div class="network-stat-value">${online}</div>
-            <div class="network-stat-label">Игроков онлайн</div>
-          </div>
-
-          <div class="network-stat">
-            <div class="network-stat-value">${SERVERS.length}</div>
-            <div class="network-stat-label">Серверов</div>
-          </div>
-
-          <div class="network-stat">
-            <div class="network-stat-value">${onlinePercent}%</div>
-            <div class="network-stat-label">Заполненность</div>
-          </div>
-
-          <div class="network-stat">
-            <div class="network-stat-value">24/7</div>
-            <div class="network-stat-label">Работа сети</div>
-          </div>
-        </div>
-
-        <div class="activity-row">
-          <div class="activity-card">
-            <div class="activity-icon">🔥</div>
-            <div class="activity-info">
-              <div class="activity-label">Самый активный сервер</div>
-              <div class="activity-value">
-                ${escapeHtml(popular.name)}
-                <span>${popular.players}/${popular.max}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="activity-card">
-            <div class="activity-icon">🎁</div>
-            <div class="activity-info">
-              <div class="activity-label">Событие дня</div>
-              <div class="activity-value">
-                Бесплатный кейс каждые 2 часа
-              </div>
-            </div>
-          </div>
+      <!-- Слайдер / Hero -->
+      <div class="hero-slider">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+          <h1>Добро пожаловать на BAZA</h1>
+          <p>Лучшие сервера CS2 с уникальными режимами и низким пингом.</p>
+          <a href="#" class="btn-hero">Начать играть</a>
         </div>
       </div>
-    </section>
-  `;
-}
-
-function renderDonators(period) {
-  return DONATORS[period].map((d, i) => `
-    <div class="donator-item">
-      <div class="donator-avatar">${d.avatar}</div>
-      <div class="donator-info">
-        <div class="donator-name ${d.color}">${escapeHtml(d.name)}</div>
-        <div class="donator-desc">${escapeHtml(d.desc)}</div>
-      </div>
-      <div class="donator-rank">#${i + 1}</div>
-    </div>`).join('');
-}
-
-let slideIndex = 0;
-function renderSlide(i) {
-  const s = SLIDES[i];
-  const ext = s.external ? 'target="_blank" rel="noopener"' : '';
-  return `
-    <h1>${s.title}</h1>
-    <p>${s.text}</p>
-    <a href="${s.link}" class="btn-hero" ${ext}>${s.btn}</a>`;
-}
-
-function renderPlan(p) {
-  return `
-    <div class="shop-card ${p.id}">
-      <div class="shop-icon">${p.icon}</div>
-      <h3>${p.name}</h3>
-      <p>${p.desc}</p>
-      <div class="shop-price"><span class="amount">${p.price}</span><span class="cur">₽ / мес</span></div>
-      <ul>${p.features.map((f) => `<li>${f}</li>`).join('')}</ul>
-      <button class="btn ${p.btn}" onclick="openModal('${p.id}')">Купить</button>
-    </div>`;
-}
-
-/* =====================================================================
-   СТРАНИЦЫ
-   ===================================================================== */
-const pages = {};
-
-pages['/'] = () => `
-  ${renderNetworkOverview()}
-
-  
-  <div class="top-banners">
-    <a class="banner-card card-base" href="${CONFIG.telegram}" target="_blank" rel="noopener">
-      <div><h3>Вступи в Telegram</h3><p>Выдача ваучеров</p></div>
-      <div class="banner-icon tg-icon">✈️</div>
-    </a>
-    <a class="banner-card card-base" href="${CONFIG.discord}" target="_blank" rel="noopener">
-      <div><h3>Discord сервер CS2</h3><p>Заходи к нам</p></div>
-      <div class="banner-icon dc-icon">🎮</div>
-    </a>
-  </div>
-
-  <div class="middle-grid">
-    <div class="donators-card card-base">
-      <div class="donators-header">Топ донатеров за</div>
-      <div class="donators-toggle">
-        <button class="active" data-period="7" onclick="setDonatorsPeriod('7')">7 дней</button>
-        <button data-period="30" onclick="setDonatorsPeriod('30')">30 дней</button>
-        <button data-period="all" onclick="setDonatorsPeriod('all')">Всё время</button>
-      </div>
-      <div id="donatorsList">${renderDonators('7')}</div>
     </div>
 
-    <div class="hero-slider">
-      <div class="hero-bg"></div>
-      <div class="hero-art"></div>
-      <div class="hero-content" id="heroContent">${renderSlide(slideIndex)}</div>
-      <div class="slider-arrows">
-        <button onclick="changeSlide(-1)" aria-label="Предыдущий слайд">‹</button>
-        <button onclick="changeSlide(1)" aria-label="Следующий слайд">›</button>
+    <!-- СЕТКА СЕРВЕРОВ -->
+    <div class="servers-grid">
+      <div class="server-card">
+        <div class="server-bg bg-public"></div>
+        <div class="server-content">
+          <div class="server-title">Public</div>
+          <div class="server-status">24/32</div>
+        </div>
+      </div>
+      <div class="server-card">
+        <div class="server-bg bg-fun"></div>
+        <div class="server-content">
+          <div class="server-title">Fun</div>
+          <div class="server-status">12/24</div>
+        </div>
+      </div>
+      <div class="server-card">
+        <div class="server-bg bg-sand"></div>
+        <div class="server-content">
+          <div class="server-title">Sand</div>
+          <div class="server-status">0/32</div>
+        </div>
+      </div>
+      <div class="server-card">
+        <div class="server-bg bg-duels"></div>
+        <div class="server-content">
+          <div class="server-title">Duels</div>
+          <div class="server-status">8/16</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="servers-grid">${SERVERS.map(renderServer).join('')}</div>
+  <!-- ================= WOW PACK СКРИПТЫ ================= -->
+  <script>
+    // Появление по очереди
+    (function(){
+      const els = document.querySelectorAll('.server-card, .banner-card, .donator-item');
+      els.forEach(el => el.classList.add('reveal'));
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach((e, i) => {
+          if(e.isIntersecting){
+            e.target.style.animationDelay = (i * 0.1) + 's';
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      els.forEach(el => io.observe(el));
+    })();
 
-  <div class="bottom-desc card-base">
-    <h2>Сервера Counter-Strike 2 (КС2) — BAZA-CS2</h2>
-    <p>BAZA-CS2 — проект серверов Counter-Strike 2 с мониторингом онлайна, скинченджером, статистикой игроков и кланами. Выберите подходящий сервер из списка выше, зайдите в игру — и поставьте любой понравившийся скин в нашем скинченджере!</p>
-  </div>
-`;
-
-pages['/shop'] = () => `
-  <section class="inner-page">
-    <div class="container">
-      <div class="page-head">
-        <div class="tagline">МАГАЗИН И КЕЙСЫ</div>
-        <h1>Магазин сервера</h1>
-        <p>Привилегии и кейсы со скинами.</p>
-      </div>
-
-      <div class="shop-tabs-wrap">
-        <div class="shop-tabs">
-          <button class="shop-tab active" data-tab="shop" onclick="switchShopTab('shop')">🛒 Магазин</button>
-          <button class="shop-tab" data-tab="cases" onclick="switchShopTab('cases')">🎁 Кейсы <span class="tab-badge">FREE</span></button>
-        </div>
-      </div>
-
-      <div id="tab-shop" class="tab-panel">
-        <div class="shop-grid">${PLANS.map(renderPlan).join('')}</div>
-      </div>
-
-      <div id="tab-cases" class="tab-panel" style="display:none;">
-        <div class="cases-hero">
-          <div class="cases-hero-info">
-            <h2>Бесплатный кейс</h2>
-            <p style="color:var(--muted);">Раз в 2 часа — крути рулетку и получай приз.</p>
-            <div class="free-timer" id="freeTimer"></div>
-            <button class="btn btn-primary" id="freeCaseBtn" onclick="openCase()" style="padding:14px 28px;">🎁 Открыть</button>
-          </div>
-          <div class="big-case">🎁</div>
-        </div>
-        <div class="case-grid">
-          ${PAID_CASES.map((c) => `
-            <div class="case-card">
-              <div class="case-visual">${c.emoji}</div>
-              <h3>${c.name}</h3>
-              <div class="case-price">${c.price} ₽</div>
-              <button class="btn btn-outline" onclick="showToast('Платные кейсы появятся после подключения оплаты', 'error')">Скоро</button>
-            </div>`).join('')}
-        </div>
-      </div>
-    </div>
-  </section>
-`;
-
-pages['/rules'] = () => `
-  <section class="inner-page">
-    <div class="container">
-      <div class="page-head">
-        <div class="tagline">ПОРЯДОК</div>
-        <h1>Правила сервера</h1>
-        <p>Незнание правил не освобождает от ответственности.</p>
-      </div>
-      <div class="rules-list">
-        ${RULES.map((text, i) => `
-          <div class="rule-item">
-            <div class="rule-num">${i + 1}</div>
-            <div class="rule-content"><p>${text}</p></div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </section>
-`;
-
-pages['/admins'] = () => `
-  <section class="inner-page">
-    <div class="container">
-      <div class="page-head">
-        <div class="tagline">КОМАНДА</div>
-        <h1>Администрация</h1>
-      </div>
-      <div class="admins-grid">
-        ${ADMINS.map((a) => `
-          <div class="admin-card">
-            <div class="admin-avatar">${escapeHtml(a.name[0].toUpperCase())}</div>
-            <div class="admin-info">
-              <h4>${escapeHtml(a.name)}</h4>
-              <p>${a.role}</p>
-              <span class="admin-badge">${a.badge}</span>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </section>
-`;
-
-pages['/faq'] = () => `
-  <section class="inner-page">
-    <div class="container">
-      <div class="page-head">
-        <div class="tagline">ПОМОЩЬ</div>
-        <h1>Частые вопросы</h1>
-      </div>
-      <div class="faq">
-        ${FAQS.map((f) => `
-          <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">${f.q}<span class="arrow">+</span></button>
-            <div class="faq-a">${f.a}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </section>
-`;
-
-pages['/bans'] = () => `
-  <section class="inner-page">
-    <div class="container">
-      <div class="page-head">
-        <div class="tagline">МОДЕРАЦИЯ</div>
-        <h1>Список банов</h1>
-      </div>
-      <div class="bans-wrap">
-        <table class="bans-table">
-          <thead><tr><th>Игрок</th><th>Причина</th><th>Админ</th><th>Дата</th><th>Срок</th></tr></thead>
-          <tbody>
-            ${BANS.map((b) => `
-              <tr>
-                <td style="font-weight:700;">${escapeHtml(b.name)}</td>
-                <td style="color:var(--muted);">${escapeHtml(b.reason)}</td>
-                <td>${escapeHtml(b.admin)}</td>
-                <td style="color:var(--muted);">${b.date}</td>
-                <td><span class="ban-perm ${b.type}">${b.term}</span></td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-`;
-
-pages['/404'] = () => `
-  <section class="inner-page">
-    <div class="page-head" style="padding-top:60px;">
-      <h1 style="font-size:120px;color:var(--accent-light);">404</h1>
-      <p>Страница не найдена</p>
-      <div style="margin-top:30px;"><a href="#/" class="btn btn-primary" style="padding:14px 28px;">← На главную</a></div>
-    </div>
-  </section>
-`;
-
-/* =====================================================================
-   РОУТЕР
-   ===================================================================== */
-const pageRoot = $('page-root');
-let currentPath = null;
-let leaveTimer = null;
-
-function parseHash() {
-  const raw = location.hash.replace(/^#/, '') || '/';
-  const [path, query] = raw.split('?');
-  return { path: path || '/', query: query || '' };
-}
-
-function renderPage(animate) {
-  let { path, query } = parseHash();
-  if (!pages[path]) path = '/404';
-
-  const draw = () => {
-    if (path === '/') slideIndex = 0;
-    pageRoot.className = path === '/' ? 'main-container' : '';
-    pageRoot.innerHTML = pages[path]();
-    if (animate) {
-      void pageRoot.offsetWidth;
-      pageRoot.classList.add('entering');
-      setTimeout(() => pageRoot.classList.remove('entering'), 750);
-    }
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    document.querySelectorAll('.nav-links a').forEach((a) => {
-      a.classList.toggle('active', a.dataset.route === path);
-    });
-    stopFreeTimer();
-    if (path === '/shop' && query === 'cases') switchShopTab('cases');
-    currentPath = path;
-  };
-
-  if (!animate || currentPath === null) return draw();
-  clearTimeout(leaveTimer);
-  pageRoot.classList.add('leaving');
-  leaveTimer = setTimeout(draw, 340);
-}
-
-/* =====================================================================
-   ГЛАВНАЯ: донатеры и слайдер
-   ===================================================================== */
-function setDonatorsPeriod(period) {
-  document.querySelectorAll('.donators-toggle button').forEach((b) => {
-    b.classList.toggle('active', b.dataset.period === period);
-  });
-  $('donatorsList').innerHTML = renderDonators(period);
-}
-
-function changeSlide(dir) {
-  slideIndex = (slideIndex + dir + SLIDES.length) % SLIDES.length;
-  const el = $('heroContent');
-  el.innerHTML = renderSlide(slideIndex);
-  el.style.animation = 'none';
-  void el.offsetWidth;
-  el.style.animation = '';
-}
-
-/* =====================================================================
-   FAQ
-   ===================================================================== */
-function toggleFaq(btn) {
-  const item = btn.parentElement;
-  document.querySelectorAll('.faq-item').forEach((i) => { if (i !== item) i.classList.remove('open'); });
-  item.classList.toggle('open');
-}
-
-/* =====================================================================
-   ТОСТ
-   ===================================================================== */
-let toastTimer;
-function showToast(msg, type) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.classList.toggle('error', type === 'error');
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-/* =====================================================================
-   ЗАКАЗ ПРИВИЛЕГИИ
-   ===================================================================== */
-const overlay = $('modalOverlay');
-let currentPlan = null;
-
-function openModal(planId) {
-  currentPlan = PLANS.find((p) => p.id === planId);
-  if (!currentPlan) return;
-  $('orderPeriod').value = '1';
-  updateModalPrice();
-  overlay.classList.add('active');
-  $('orderSteam').focus();
-}
-
-function updateModalPrice() {
-  if (!currentPlan) return;
-  const months = Number($('orderPeriod').value);
-  const total = months === 3 ? Math.round(currentPlan.price * 3 * 0.9) : currentPlan.price;
-  $('modalPlan').textContent = `${currentPlan.name} — ${total} ₽`;
-}
-
-function closeModal() { overlay.classList.remove('active'); }
-overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-
-function submitOrder() {
-  const steam = $('orderSteam').value.trim();
-  if (!steam) {
-    showToast('Укажите Steam ID или ссылку на профиль', 'error');
-    $('orderSteam').focus();
-    return;
-  }
-  closeModal();
-  showToast(`Напишите в поддержку для оформления ${currentPlan.name}`);
-  window.open(CONFIG.support, '_blank', 'noopener');
-  $('orderSteam').value = '';
-  $('orderContact').value = '';
-}
-
-/* =====================================================================
-   МАГАЗИН: вкладки
-   ===================================================================== */
-function switchShopTab(tab) {
-  const shopDiv = $('tab-shop');
-  const casesDiv = $('tab-cases');
-  if (!shopDiv || !casesDiv) return;
-  document.querySelectorAll('.shop-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-  shopDiv.style.display = tab === 'shop' ? 'block' : 'none';
-  casesDiv.style.display = tab === 'cases' ? 'block' : 'none';
-  if (tab === 'cases') startFreeTimer(); else stopFreeTimer();
-}
-
-/* =====================================================================
-   БЕСПЛАТНЫЙ КЕЙС
-   Внимание: таймер в localStorage и розыгрыш в браузере легко обойти.
-   Для реальной выдачи призов розыгрыш нужно перенести на сервер.
-   ===================================================================== */
-function getLastFreeOpen() { try { return Number(localStorage.getItem(FREE_CASE_KEY)) || 0; } catch (e) { return 0; } }
-function setLastFreeOpen(ts) { try { localStorage.setItem(FREE_CASE_KEY, String(ts)); } catch (e) {} }
-function canOpenFree() { return Date.now() - getLastFreeOpen() >= FREE_CASE_COOLDOWN; }
-
-let freeTimerInterval = null;
-function startFreeTimer() {
-  stopFreeTimer();
-  const el = $('freeTimer');
-  const btn = $('freeCaseBtn');
-  if (!el) return;
-
-  const update = () => {
-    if (canOpenFree()) {
-      el.innerHTML = '<div style="color:var(--green);font-weight:700;font-size:15px;">Готов к открытию!</div>';
-      if (btn) { btn.disabled = false; btn.textContent = '🎁 Открыть'; }
-      stopFreeTimer();
-      return;
-    }
-    const remaining = FREE_CASE_COOLDOWN - (Date.now() - getLastFreeOpen());
-    const h = Math.floor(remaining / 3600000);
-    const m = Math.floor((remaining % 3600000) / 60000);
-    const s = Math.floor((remaining % 60000) / 1000);
-    const cell = (n, l) => `<div class="timer-cell"><div class="num">${String(n).padStart(2, '0')}</div><div class="lbl">${l}</div></div>`;
-    el.innerHTML = cell(h, 'час') + cell(m, 'мин') + cell(s, 'сек');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Скоро'; }
-  };
-  update();
-  if (!canOpenFree()) freeTimerInterval = setInterval(update, 1000);
-}
-function stopFreeTimer() {
-  if (freeTimerInterval) { clearInterval(freeTimerInterval); freeTimerInterval = null; }
-}
-
-function pickWeighted(items) {
-  const total = items.reduce((sum, it) => sum + RARITIES[it.rarity].weight, 0);
-  let r = Math.random() * total;
-  for (const it of items) {
-    r -= RARITIES[it.rarity].weight;
-    if (r <= 0) return it;
-  }
-  return items[items.length - 1];
-}
-
-const caseModal = $('caseModal');
-let caseAnimTimer = null;
-let spinning = false;
-
-function openCase() {
-  if (!canOpenFree()) { showToast('Бесплатный кейс ещё не готов!', 'error'); return; }
-  setLastFreeOpen(Date.now()); // фиксируем сразу, чтобы нельзя было закрыть и открыть снова
-  spinning = true;
-
-  const items = FREE_CASE.items;
-  const track = $('rouletteTrack');
-  const result = $('rouletteResult');
-  const closeBtn = $('closeCaseBtn');
-  $('rouletteCaseName').textContent = FREE_CASE.name;
-
-  result.classList.remove('show');
-  closeBtn.style.display = 'none';
-  track.classList.remove('animate');
-  track.style.transform = 'translateX(0)';
-
-  const win = pickWeighted(items);
-  const TOTAL = 60, WIN_INDEX = 52;
-  const strip = [];
-  for (let i = 0; i < TOTAL; i++) {
-    strip.push(i === WIN_INDEX ? win : items[Math.floor(Math.random() * items.length)]);
-  }
-  track.innerHTML = strip.map((it) => `
-    <div class="roulette-item rar-${it.rarity}">
-      <div class="item-emoji">${it.emoji}</div>
-      <div class="item-name">${it.name}</div>
-    </div>`).join('');
-
-  caseModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const wrap = track.parentElement;
-      const winEl = track.children[WIN_INDEX];
-      const jitter = (Math.random() - 0.5) * winEl.offsetWidth * 0.7;
-      const offset = wrap.clientWidth / 2 - (winEl.offsetLeft + winEl.offsetWidth / 2) + jitter;
-      track.classList.add('animate');
-      track.style.transform = `translateX(${offset}px)`;
-
-      caseAnimTimer = setTimeout(() => {
-        $('resEmoji').textContent = win.emoji;
-        $('resName').textContent = win.name;
-        $('resRarity').textContent = RARITIES[win.rarity].name;
-        $('resultCard').style.borderColor = `var(--r-${win.rarity})`;
-        result.classList.add('show');
-        closeBtn.style.display = 'inline-flex';
-        spinning = false;
-        spawnConfetti();
-        startFreeTimer();
-      }, 5200);
-    });
-  });
-}
-
-function closeCaseModal() {
-  if (spinning) return;
-  caseModal.classList.remove('active');
-  document.body.style.overflow = '';
-  clearTimeout(caseAnimTimer);
-}
-
-function spawnConfetti() {
-  const colors = ['#a855f7', '#c084fc', '#d946ef', '#8b5cf6', '#22d3ee'];
-  for (let i = 0; i < 40; i++) {
-    const el = document.createElement('div');
-    el.style.cssText = `position:fixed;top:-20px;width:9px;height:13px;z-index:600;pointer-events:none;
-      left:${Math.random() * 100}vw;background:${colors[Math.floor(Math.random() * colors.length)]};
-      animation:confettiFall ${2 + Math.random() * 1.5}s linear forwards;`;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4000);
-  }
-}
-
-/* =====================================================================
-   ЧАТ: живого оператора нет, поэтому чат честно направляет в Telegram
-   ===================================================================== */
-const chatWidget = $('chatWidget');
-const chatFab = $('chatFab');
-const chatMessages = $('chatMessages');
-const chatInput = $('chatInput');
-
-function toggleChat() {
-  const open = !chatWidget.classList.contains('active');
-  chatWidget.classList.toggle('active', open);
-  chatFab.classList.toggle('open', open);
-  chatFab.textContent = open ? '×' : '💬';
-  if (open) {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    if (window.innerWidth > 768) chatInput.focus();
-  }
-}
-
-function addChatMessage(html, sender) {
-  const div = document.createElement('div');
-  div.className = `chat-msg ${sender}`;
-  const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  div.innerHTML = `<div class="msg-bubble">${html}</div><div class="msg-time">${time}</div>`;
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function sendChatMessage() {
-  const text = chatInput.value.trim();
-  if (!text) return;
-  addChatMessage(escapeHtml(text), 'user'); // текст пользователя всегда экранируем
-  chatInput.value = '';
-  setTimeout(() => {
-    addChatMessage(`Онлайн-чат пока не подключён. Напишите нам в Telegram, там отвечают администраторы: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support}</a>`, 'support');
-  }, 600);
-}
-
-/* =====================================================================
-   ЗАПУСК
-   ===================================================================== */
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Escape') return;
-  closeModal();
-  closeCaseModal();
-  if (chatWidget.classList.contains('active')) toggleChat();
-});
-
-$('navOnline').textContent = SERVERS.reduce((sum, s) => sum + s.players, 0);
-addChatMessage('Привет! По вопросам покупок и банов пишите сюда или сразу в Telegram.', 'support');
-
-window.addEventListener('hashchange', () => renderPage(true));
-renderPage(false);
-</script>
-
+    // Счётчик онлайна
+    (function(){
+      const badge = document.querySelector('.online-badge');
+      if(!badge) return;
+      const target = 142; let cur = 0;
+      const timer = setInterval(()=>{
+        cur = Math.min(target, cur + 4);
+        badge.textContent = 'Онлайн: ' + cur;
+        if(cur >= target) clearInterval(timer);
+      }, 25);
+    })();
+  </script>
 </body>
 </html>
