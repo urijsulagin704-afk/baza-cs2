@@ -1,73 +1,45 @@
+Ниже полностью исправленный файл. Все данные (серверы, тарифы, правила, админы, баны, кейсы) лежат в массивах в начале `<script>`, поэтому дальше вы правите только их, а вёрстку не трогаете.
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BAZA — CS2 сервера</title>
+<title>BAZA — сервера Counter-Strike 2</title>
+<meta name="description" content="BAZA-CS2 — проект серверов Counter-Strike 2: Public, Retake, AWP, Duels и другие режимы.">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #070312;
-    --bg-2: #0f0721;
-    --card: #150b2a;
-    --card-2: #1c1038;
-    --border: #2a1852;
-    --border-hi: #3d2470;
-    
-    --accent: #a855f7;
-    --accent-light: #c084fc;
-    --accent-dark: #7c3aed;
-    --accent-2: #d946ef;
-    
-    --text: #ffffff;
-    --muted: #9a8fb0;
-    
-    --green: #10b981;
-    --red: #ef4444;
-    --blue: #3b82f6;
-    --yellow: #f59e0b;
-
-    /* редкости CS2 */
+    --bg: #070312; --bg-2: #0f0721; --card: #150b2a; --card-2: #1c1038;
+    --border: #2a1852; --border-hi: #3d2470;
+    --accent: #a855f7; --accent-light: #c084fc; --accent-dark: #7c3aed; --accent-2: #d946ef;
+    --text: #ffffff; --muted: #9a8fb0;
+    --green: #10b981; --red: #ef4444; --blue: #3b82f6; --yellow: #f59e0b;
     --r-consumer: #b0c3d9; --r-industrial: #5e98d9; --r-milspec: #4b69ff;
-    --r-restricted: #8847ff; --r-classified: #d32ce6; --r-covert: #eb4b4b;
-    --r-rare: #ffd700;
+    --r-restricted: #8847ff; --r-classified: #d32ce6; --r-covert: #eb4b4b; --r-rare: #ffd700;
   }
-  
   html { scroll-behavior: smooth; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg); color: var(--text);
-    line-height: 1.5; overflow-x: hidden;
-    min-height: 100vh; position: relative;
+    line-height: 1.5; overflow-x: hidden; min-height: 100vh; position: relative;
   }
-
-  /* Фон */
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background:
       radial-gradient(circle at 10% 20%, rgba(168,85,247,0.15), transparent 40%),
       radial-gradient(circle at 90% 80%, rgba(139,92,246,0.15), transparent 40%);
-    z-index: -1;
-    pointer-events: none;
   }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-light); outline-offset: 2px; }
 
-  /* ============ PAGE TRANSITIONS ============ */
+  /* ============ ПЕРЕХОДЫ ============ */
   #page-root {
-    transition: opacity .35s cubic-bezier(.4,0,.2,1),
-                transform .35s cubic-bezier(.4,0,.2,1),
-                filter .35s cubic-bezier(.4,0,.2,1);
-    will-change: opacity, transform, filter;
+    transition: opacity .35s cubic-bezier(.4,0,.2,1), transform .35s cubic-bezier(.4,0,.2,1), filter .35s cubic-bezier(.4,0,.2,1);
   }
-  #page-root.leaving {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.98);
-    filter: blur(6px);
-  }
-  #page-root.entering {
-    animation: pageEnter .7s cubic-bezier(.16,1,.3,1);
-  }
+  #page-root.leaving { opacity: 0; transform: translateY(-30px) scale(0.98); filter: blur(6px); }
+  #page-root.entering { animation: pageEnter .7s cubic-bezier(.16,1,.3,1); }
   @keyframes pageEnter {
     0% { opacity: 0; transform: translateY(50px) scale(1.01); filter: blur(8px); }
     60% { filter: blur(2px); }
@@ -76,10 +48,8 @@
 
   /* ============ NAVBAR ============ */
   nav {
-    background: rgba(21, 11, 42, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 100;
+    background: rgba(21, 11, 42, 0.8); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
   }
   .nav-inner {
     max-width: 1400px; margin: 0 auto; padding: 12px 24px;
@@ -88,9 +58,8 @@
   .logo {
     font-size: 28px; font-weight: 900; letter-spacing: 1px;
     background: linear-gradient(90deg, #fff, var(--accent-light));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-decoration: none; flex-shrink: 0; cursor: pointer;
-    text-shadow: 0 2px 10px rgba(168,85,247,0.3);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    text-decoration: none; flex-shrink: 0;
   }
   .nav-links {
     display: flex; gap: 8px; list-style: none; align-items: center;
@@ -101,98 +70,68 @@
   .nav-links a {
     color: #d1c8e3; text-decoration: none; font-size: 14px; font-weight: 600;
     display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
-    white-space: nowrap; cursor: pointer; padding: 6px 12px; border-radius: 6px;
+    white-space: nowrap; padding: 6px 12px; border-radius: 6px;
   }
-  .nav-links a:hover, .nav-links a.active { 
-    color: var(--accent-light); 
-    background: rgba(255,255,255,0.05);
-  }
-  
+  .nav-links a:hover, .nav-links a.active { color: var(--accent-light); background: rgba(255,255,255,0.05); }
   .online-badge {
-    background: rgba(16, 185, 129, 0.15); color: var(--green);
+    background: rgba(16,185,129,0.15); color: var(--green);
     padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; gap: 6px;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    border: 1px solid rgba(16,185,129,0.3);
   }
   .online-badge::before {
     content: ''; width: 6px; height: 6px; background: var(--green);
-    border-radius: 50%; animation: pulse 1.5s infinite;
-    box-shadow: 0 0 8px var(--green);
+    border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 8px var(--green);
   }
   @keyframes pulse { 50% { opacity: 0.3; } }
-
   .nav-actions { display: flex; gap: 12px; flex-shrink: 0; }
 
-  /* ============ ДЕТАЛИЗИРОВАННЫЕ КНОПКИ ============ */
+  /* ============ КНОПКИ ============ */
   .btn {
     padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 700;
-    cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px;
-    text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-    font-family: inherit; position: relative; overflow: hidden;
-    user-select: none; letter-spacing: 0.3px;
+    cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    font-family: inherit; position: relative; overflow: hidden; user-select: none; letter-spacing: 0.3px;
+    color: var(--text);
   }
   .btn::after {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 50%; height: 100%;
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     transform: skewX(-20deg); transition: left 0.6s ease; pointer-events: none;
   }
   .btn:hover::after { left: 150%; }
   .btn:active { transform: translateY(1px) scale(0.97) !important; box-shadow: none !important; }
-
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
   .btn-primary {
     background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%);
-    border-top: 1px solid rgba(255,255,255,0.3);
-    border-bottom: 1px solid rgba(0,0,0,0.4);
-    box-shadow: 0 4px 15px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
-    color: #fff;
+    border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(0,0,0,0.4);
+    box-shadow: 0 4px 15px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.2); color: #fff;
   }
-  .btn-primary:hover {
+  .btn-primary:hover:not(:disabled) {
     background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
     box-shadow: 0 6px 20px rgba(124,58,237,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
     transform: translateY(-2px);
   }
-
   .btn-outline {
-    background: rgba(61, 36, 112, 0.15);
-    border: 1px solid var(--border-hi);
-    color: var(--text);
+    background: rgba(61,36,112,0.15); border: 1px solid var(--border-hi);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .btn-outline:hover {
-    background: rgba(168,85,247,0.12);
-    border-color: var(--accent-light);
-    color: var(--accent-light);
-    box-shadow: 0 0 15px rgba(168,85,247,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+    background: rgba(168,85,247,0.12); border-color: var(--accent-light); color: var(--accent-light);
+    box-shadow: 0 0 15px rgba(168,85,247,0.2);
   }
-
-  .btn-orange { 
+  .btn-orange {
     background: linear-gradient(180deg, #563a21 0%, #2e1c0c 100%);
-    border-top: 1px solid rgba(245,158,11,0.4);
-    border-bottom: 1px solid rgba(0,0,0,0.5);
-    color: #fbbf24;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(245,158,11,0.4); border-bottom: 1px solid rgba(0,0,0,0.5);
+    color: #fbbf24; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
   }
-  .btn-orange:hover { 
-    background: linear-gradient(180deg, #6d4a2a 0%, #402712 100%);
-    box-shadow: 0 4px 12px rgba(245,158,11,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
-    transform: translateY(-1px);
-  }
-
-  .btn-purple { 
+  .btn-orange:hover { background: linear-gradient(180deg, #6d4a2a 0%, #402712 100%); transform: translateY(-1px); }
+  .btn-purple {
     background: linear-gradient(180deg, #3a2766 0%, #1f133b 100%);
-    border-top: 1px solid rgba(168,85,247,0.3);
-    border-bottom: 1px solid rgba(0,0,0,0.5);
-    color: #d1c8e3;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(168,85,247,0.3); border-bottom: 1px solid rgba(0,0,0,0.5);
+    color: #d1c8e3; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
   }
-  .btn-purple:hover { 
-    background: linear-gradient(180deg, #4a327f 0%, #291a4d 100%);
-    box-shadow: 0 4px 12px rgba(168,85,247,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
-    transform: translateY(-1px);
-  }
-
+  .btn-purple:hover { background: linear-gradient(180deg, #4a327f 0%, #291a4d 100%); transform: translateY(-1px); }
   .btn-hero {
     background: linear-gradient(180deg, #e9d5ff 0%, #a78bfa 100%);
     color: #1e0f37; padding: 12px 24px; border-radius: 8px; font-weight: 800;
@@ -201,712 +140,534 @@
     box-shadow: 0 4px 15px rgba(167,139,250,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
     transition: all 0.25s; position: relative; overflow: hidden;
   }
-  .btn-hero::after {
-    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-    transform: skewX(-20deg); transition: left 0.6s ease; pointer-events: none;
+  .btn-hero:hover {
+    transform: translateY(-2px); background: linear-gradient(180deg, #f3e8ff 0%, #c4b5fd 100%);
+    box-shadow: 0 6px 20px rgba(167,139,250,0.6);
   }
-  .btn-hero:hover::after { left: 150%; }
-  .btn-hero:hover { 
-    transform: translateY(-2px);
-    background: linear-gradient(180deg, #f3e8ff 0%, #c4b5fd 100%);
-    box-shadow: 0 6px 20px rgba(167,139,250,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
-  }
-  .btn-hero:active { transform: translateY(1px) scale(0.98); }
 
-  /* ============ MAIN CONTAINER ============ */
+  /* ============ ГЛАВНАЯ ============ */
   .main-container {
     max-width: 1400px; margin: 24px auto; padding: 0 24px;
     display: flex; flex-direction: column; gap: 24px;
   }
-
-  /* Верхние баннеры */
-  .top-banners { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .banner-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: relative; overflow: hidden;
+  .card-base {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
   }
+  .top-banners { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .banner-card {
+    padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
+    text-decoration: none; transition: transform .2s, border-color .2s;
+  }
+  .banner-card:hover { transform: translateY(-2px); border-color: var(--border-hi); }
   .banner-card h3 { font-size: 16px; margin-bottom: 4px; }
   .banner-card p { color: var(--muted); font-size: 13px; }
   .banner-icon {
-    width: 56px; height: 56px; border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px; border-top: 1px solid rgba(255,255,255,0.3);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    border-top: 1px solid rgba(255,255,255,0.3);
   }
-  .tg-icon { background: linear-gradient(180deg, #2AABEE, #229ED9); box-shadow: 0 4px 20px rgba(42, 171, 238, 0.3); }
-  .dc-icon { background: linear-gradient(180deg, #5865F2, #4752C4); box-shadow: 0 4px 20px rgba(88, 101, 242, 0.3); }
+  .tg-icon { background: linear-gradient(180deg, #2AABEE, #229ED9); box-shadow: 0 4px 20px rgba(42,171,238,0.3); }
+  .dc-icon { background: linear-gradient(180deg, #5865F2, #4752C4); box-shadow: 0 4px 20px rgba(88,101,242,0.3); }
 
-  /* Центральный блок */
   .middle-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
 
-  /* Сайдбар: Топ донатеров */
-  .donators-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
-  }
-  .donators-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; font-size: 14px; font-weight: 700;
-  }
+  .donators-card { padding: 24px; }
+  .donators-header { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
   .donators-toggle {
     display: flex; background: var(--bg); border-radius: 8px; padding: 4px;
-    margin-bottom: 20px; border: 1px solid var(--border);
+    margin-bottom: 12px; border: 1px solid var(--border);
   }
   .donators-toggle button {
     flex: 1; padding: 6px; border: none; background: transparent;
     color: var(--muted); font-size: 12px; font-weight: 600;
     border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: inherit;
   }
-  .donators-toggle button.active {
-    background: #ffffff; color: #000; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 -2px 0 var(--accent);
-  }
-  .donator-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 0; border-bottom: 1px solid var(--border);
-  }
+  .donators-toggle button:hover { color: var(--text); }
+  .donators-toggle button.active { background: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 -2px 0 var(--accent); }
+  .donator-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); animation: msgIn .3s ease-out; }
   .donator-item:last-child { border-bottom: none; padding-bottom: 0; }
   .donator-avatar {
     width: 40px; height: 40px; border-radius: 8px; background: var(--bg-2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; overflow: hidden;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;
   }
-  .donator-info { flex: 1; }
-  .donator-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .donator-info { flex: 1; min-width: 0; }
+  .donator-name { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .donator-name.gold { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
   .donator-name.purple { color: #d8b4fe; text-shadow: 0 0 10px rgba(216,180,254,0.3); }
   .donator-name.blue { color: #93c5fd; text-shadow: 0 0 10px rgba(147,197,253,0.3); }
   .donator-desc { font-size: 11px; color: var(--muted); }
-  .donator-rank {
-    font-size: 24px; font-weight: 900; color: var(--border-hi);
-    font-style: italic; text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-  }
+  .donator-rank { font-size: 24px; font-weight: 900; color: var(--border-hi); font-style: italic; }
 
-  /* Слайдер */
   .hero-slider {
     background: linear-gradient(135deg, #1e0f37, #0f0721);
-    border: 1px solid var(--border); border-radius: 16px;
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 40px; min-height: 300px;
+    border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; min-height: 300px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.3);
   }
   .hero-bg {
-    position: absolute; inset: 0;
-    background: 
+    position: absolute; inset: 0; z-index: 1;
+    background:
       radial-gradient(circle at 70% 30%, rgba(168,85,247,0.4), transparent 50%),
       radial-gradient(circle at 20% 80%, rgba(88,101,242,0.2), transparent 50%),
       linear-gradient(to top, rgba(15,7,33,1) 0%, rgba(15,7,33,0.2) 60%, transparent 100%);
-    z-index: 1;
   }
   .hero-art {
     position: absolute; inset: 0; z-index: 1;
-    background-image: 
-      radial-gradient(circle at 60% 50%, transparent 20%, rgba(0,0,0,0.4) 100%),
-      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(168,85,247,0.05) 10px, rgba(168,85,247,0.05) 20px);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(168,85,247,0.05) 10px, rgba(168,85,247,0.05) 20px);
+    -webkit-mask-image: linear-gradient(to top, black 40%, transparent 100%);
     mask-image: linear-gradient(to top, black 40%, transparent 100%);
   }
-  .hero-content { position: relative; z-index: 2; }
+  .hero-content { position: relative; z-index: 2; max-width: 560px; }
+  .hero-content.fade { animation: tabFadeIn .45s ease; }
   .hero-content h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-  .hero-content p { color: #d1c8e3; margin-bottom: 24px; font-size: 15px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
-  
+  .hero-content p { color: #d1c8e3; margin-bottom: 24px; font-size: 15px; }
   .slider-arrows { position: absolute; bottom: 40px; right: 40px; display: flex; gap: 8px; z-index: 2; }
   .slider-arrows button {
-    width: 40px; height: 40px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%; font-size: 20px;
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-    color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: 0.2s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    color: #fff; cursor: pointer; transition: 0.2s;
   }
   .slider-arrows button:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+  .slider-dots { position: absolute; top: 24px; left: 40px; display: flex; gap: 6px; z-index: 2; }
+  .slider-dots button {
+    width: 24px; height: 4px; border-radius: 2px; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.25); transition: .3s;
+  }
+  .slider-dots button.active { background: var(--accent-light); width: 40px; }
 
-  /* Сетка серверов */
+  .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .section-title h2 { font-size: 22px; font-weight: 800; }
+  .section-title span { color: var(--muted); font-size: 14px; }
+  .section-title b { color: var(--green); }
+
   .servers-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .server-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden; position: relative;
-    aspect-ratio: 3/4; cursor: pointer;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; position: relative; aspect-ratio: 3/4; min-height: 240px;
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
   }
   .server-card:hover {
     transform: translateY(-4px); border-color: var(--accent);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4), 0 0 15px rgba(168,85,247,0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 15px rgba(168,85,247,0.2);
   }
   .server-bg {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 100px; z-index: 1; opacity: 0.8;
-    background: linear-gradient(180deg, var(--card-2) 0%, var(--card) 100%);
+    position: absolute; inset: 0; z-index: 1; opacity: 0.8;
+    display: flex; align-items: center; justify-content: center; font-size: 90px;
   }
+  .server-bg::after { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
   .bg-public { background: linear-gradient(180deg, #1c1038 0%, #0a0416 100%); }
-  .bg-public::after { content: '🕵️'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+  .bg-public::after { content: '🕵️'; }
+  .bg-retake { background: linear-gradient(180deg, #2a1852 0%, #0a0416 100%); }
+  .bg-retake::after { content: '💣'; }
   .bg-fun { background: linear-gradient(180deg, #2a1b4d 0%, #0a0416 100%); }
-  .bg-fun::after { content: '🤪'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+  .bg-fun::after { content: '🤪'; }
   .bg-sand { background: linear-gradient(180deg, #3d2470 0%, #0a0416 100%); }
-  .bg-sand::after { content: '🏜️'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+  .bg-sand::after { content: '🏜️'; }
   .bg-duels { background: linear-gradient(180deg, #1e0f37 0%, #0a0416 100%); }
-  .bg-duels::after { content: '⚔️'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
-  .bg-csgo { background: linear-gradient(180deg, #2a1852 0%, #0a0416 100%); }
-  .bg-csgo::after { content: '💣'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+  .bg-duels::after { content: '⚔️'; }
   .bg-awp { background: linear-gradient(180deg, #1c1038 0%, #0a0416 100%); }
-  .bg-awp::after { content: '🎯'; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
-
+  .bg-awp::after { content: '🎯'; }
   .server-content {
-    position: absolute; inset: 0; z-index: 2;
-    padding: 16px; display: flex; flex-direction: column;
-    justify-content: space-between;
-    background: linear-gradient(to top, rgba(10,4,22,0.95) 0%, transparent 50%);
+    position: absolute; inset: 0; z-index: 2; padding: 14px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: linear-gradient(to top, rgba(10,4,22,0.97) 0%, rgba(10,4,22,0.3) 55%, transparent 75%);
   }
   .server-title { font-size: 16px; font-weight: 800; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-  .server-status {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--green); font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-  }
-  .server-status::before {
-    content: ''; width: 6px; height: 6px; background: var(--green);
-    border-radius: 50%; box-shadow: 0 0 8px var(--green);
-  }
+  .server-map { font-size: 12px; color: var(--muted); }
+  .server-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); font-weight: 600; }
+  .server-status::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+  .server-status.full { color: var(--yellow); }
   .server-status.empty { color: var(--muted); }
-  .server-status.empty::before { background: var(--muted); box-shadow: none; }
-
-  /* Описание снизу */
-  .bottom-desc {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
+  .server-status.empty::before { box-shadow: none; }
+  .server-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin: 6px 0 10px; overflow: hidden; }
+  .server-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 2px; }
+  .server-actions { display: flex; gap: 6px; }
+  .srv-btn {
+    flex: 1; padding: 7px 8px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    text-align: center; text-decoration: none; cursor: pointer; font-family: inherit;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; transition: .2s;
   }
+  .srv-btn:hover { background: rgba(255,255,255,0.16); }
+  .srv-btn.play { flex: 2; background: linear-gradient(180deg, #b16cf9, #8b31f5); border-color: rgba(255,255,255,0.2); }
+  .srv-btn.play:hover { filter: brightness(1.1); }
+
+  .bottom-desc { padding: 24px; }
   .bottom-desc h2 { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
   .bottom-desc p { color: var(--muted); font-size: 14px; line-height: 1.6; }
 
-  /* ============ СТРАНИЦЫ ============ */
+  /* ============ ВНУТРЕННИЕ СТРАНИЦЫ ============ */
   section.inner-page { padding: 40px 24px 80px; }
   .container { max-width: 1200px; margin: 0 auto; }
   .page-head { text-align: center; margin-bottom: 40px; }
-  .page-head h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .page-head h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; }
   .page-head p { color: var(--muted); font-size: 17px; max-width: 560px; margin: 0 auto; }
-  .page-head .tagline {
-    display: inline-block; font-size: 12px; font-weight: 700;
-    color: var(--accent-light); letter-spacing: 2px;
-    padding: 6px 14px; border-radius: 100px;
-    background: rgba(168,85,247,0.1);
-    border: 1px solid rgba(168,85,247,0.28);
-    margin-bottom: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  .tagline {
+    display: inline-block; font-size: 12px; font-weight: 700; color: var(--accent-light); letter-spacing: 2px;
+    padding: 6px 14px; border-radius: 100px; background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.28); margin-bottom: 18px;
   }
-  
-  /* Магазин */
+
   .shop-tabs-wrap { max-width: 460px; margin: 0 auto 40px; }
-  .shop-tabs { 
-    display: flex; gap: 6px; background: var(--card); 
-    border: 1px solid var(--border); border-radius: 12px; padding: 6px; 
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+  .shop-tabs {
+    display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
   }
   .shop-tab {
-    flex: 1; padding: 12px 20px; border: none; background: transparent;
-    color: var(--muted); font-weight: 600; font-size: 15px; border-radius: 8px; cursor: pointer; transition: all .2s;
+    flex: 1; padding: 12px 20px; border: none; background: transparent; color: var(--muted);
+    font-weight: 600; font-size: 15px; border-radius: 8px; cursor: pointer; transition: all .2s;
     font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;
-    position: relative;
   }
   .shop-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .shop-tab.active { 
-    background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); 
-    color: #fff; border-top: 1px solid rgba(255,255,255,0.3);
-    border-bottom: 1px solid rgba(0,0,0,0.4);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .shop-tab .tab-badge { background: rgba(34,197,94,0.2); color: var(--green); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+  .shop-tab.active { background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .tab-badge { background: rgba(34,197,94,0.2); color: var(--green); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
   .shop-tab.active .tab-badge { background: rgba(255,255,255,0.25); color: #fff; }
   .tab-panel { animation: tabFadeIn .35s ease; }
   @keyframes tabFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
   .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
   .shop-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px; position: relative;
-    transition: transform .25s, border-color .25s, background .25s; display: flex; flex-direction: column;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px;
+    position: relative; display: flex; flex-direction: column; transition: transform .25s, background .25s;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
   }
-  .shop-card:hover { 
-    transform: translateY(-4px); background: var(--card-2); 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4); 
+  .shop-card:hover { transform: translateY(-4px); background: var(--card-2); }
+  .shop-card .hit {
+    position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 800; letter-spacing: 1px;
+    padding: 3px 9px; border-radius: 6px; background: rgba(59,130,246,0.2); color: #78b0ff;
   }
-  .shop-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); }
-  .shop-card.vip { border-color: rgba(168,85,247,0.3); }
+  .shop-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; }
+  .shop-card.vip { border-color: rgba(168,85,247,0.35); }
   .shop-card.vip .shop-icon { background: rgba(168,85,247,0.12); }
-  .shop-card.premium { border-color: rgba(59,130,246,0.3); }
-  .shop-card.premium .shop-icon { background: rgba(59,130,246,0.12); }
-  .shop-card.admin { border-color: rgba(239,68,68,0.3); }
-  .shop-card.admin .shop-icon { background: rgba(239,68,68,0.12); }
-  .shop-card h3 { font-size: 19px; margin-bottom: 6px; font-weight: 800; }
   .shop-card.vip h3 { color: var(--accent-light); }
+  .shop-card.premium { border-color: rgba(59,130,246,0.35); }
+  .shop-card.premium .shop-icon { background: rgba(59,130,246,0.12); }
   .shop-card.premium h3 { color: #78b0ff; }
+  .shop-card.admin { border-color: rgba(239,68,68,0.35); }
+  .shop-card.admin .shop-icon { background: rgba(239,68,68,0.12); }
   .shop-card.admin h3 { color: #ff7b78; }
+  .shop-card h3 { font-size: 19px; margin-bottom: 6px; font-weight: 800; }
   .shop-card > p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
   .shop-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 16px; }
-  .shop-price .amount { font-size: 34px; font-weight: 800; letter-spacing: -1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+  .shop-price .amount { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
   .shop-price .cur { color: var(--muted); font-size: 16px; font-weight: 600; }
   .shop-card ul { list-style: none; margin-bottom: 20px; flex: 1; }
   .shop-card li { padding: 7px 0; font-size: 14px; color: #b8b0cc; display: flex; gap: 10px; }
-  .shop-card li::before { content: '✓'; color: var(--green); font-weight: 700; text-shadow: 0 0 8px rgba(16,185,129,0.5); }
+  .shop-card li::before { content: '✓'; color: var(--green); font-weight: 700; }
   .shop-card .btn { width: 100%; padding: 12px; font-size: 15px; }
 
-  /* Кейсы */
-  .cases-hero { 
-    background: linear-gradient(160deg, var(--card), var(--bg-2)); 
-    border: 1px solid var(--border); border-radius: 20px; padding: 40px; 
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 26px; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.3);
+  .cases-hero {
+    background: linear-gradient(160deg, var(--card), var(--bg-2)); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    align-items: center; margin-bottom: 26px;
   }
-  .cases-hero-info h2 { font-size: 30px; font-weight: 800; margin-bottom: 12px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-  .free-timer { display: flex; gap: 8px; margin: 20px 0; }
-  .timer-cell { 
-    background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; 
-    padding: 10px 14px; text-align: center; min-width: 60px; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); 
-  }
+  .cases-hero h2 { font-size: 30px; font-weight: 800; margin-bottom: 12px; }
+  .free-timer { display: flex; gap: 8px; margin: 20px 0; min-height: 62px; align-items: center; }
+  .timer-cell { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 60px; }
   .timer-cell .num { font-size: 22px; font-weight: 800; color: var(--accent-light); }
   .timer-cell .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
   .big-case { font-size: 120px; animation: caseFloat 4s ease-in-out infinite; text-align: center; filter: drop-shadow(0 10px 30px rgba(168,85,247,0.3)); }
   @keyframes caseFloat { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
   .case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-  .case-card { 
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; 
-    text-align: center; transition: transform .25s, box-shadow .25s; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2); 
-  }
-  .case-card:hover { transform: translateY(-4px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4); }
-  .case-visual { font-size: 68px; margin-bottom: 12px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3)); }
+  .case-card { padding: 24px; text-align: center; transition: transform .25s; }
+  .case-card:hover { transform: translateY(-4px); }
+  .case-visual { font-size: 68px; margin-bottom: 12px; }
   .case-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-  .case-price { font-size: 24px; font-weight: 800; margin: 16px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-  
-  /* Правила / FAQ / Баны / Админы */
+  .case-card .case-count { font-size: 12px; color: var(--muted); }
+  .case-price { font-size: 24px; font-weight: 800; margin: 16px 0; }
+
   .rules-list { max-width: 850px; margin: 0 auto; }
-  .rule-item { 
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; 
-    display: flex; gap: 16px; padding: 20px 22px; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.2); 
+  .rule-item { padding: 20px 22px; margin-bottom: 10px; display: flex; gap: 16px; border-radius: 12px; }
+  .rule-num {
+    width: 36px; height: 36px; flex-shrink: 0; background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.28); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--accent-light); font-size: 14px;
   }
-  .rule-num { 
-    width: 36px; height: 36px; flex-shrink: 0; 
-    background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.28); 
-    border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-    font-weight: 800; color: var(--accent-light); font-size: 14px; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); 
-  }
-  .rule-content h4 { font-size: 15.5px; margin-bottom: 6px; }
-  .rule-content p { color: var(--muted); font-size: 14.5px; }
-  
+  .rule-item p { color: #cfc6e0; font-size: 14.5px; padding-top: 6px; }
+
   .admins-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  .admin-card { 
-    background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; 
-    display: flex; align-items: center; gap: 14px; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.2); 
-  }
-  .admin-avatar { 
-    width: 52px; height: 52px; border-radius: 10px; 
-    background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); 
-    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; 
-    border-top: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+  .admin-card { padding: 20px; display: flex; align-items: center; gap: 14px; border-radius: 14px; }
+  .admin-avatar {
+    width: 52px; height: 52px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;
   }
   .admin-info h4 { font-size: 15.5px; margin-bottom: 2px; }
   .admin-info p { font-size: 13px; color: var(--muted); }
-  .admin-badge { 
-    display: inline-block; padding: 2px 9px; background: rgba(168,85,247,0.1); 
-    color: var(--accent-light); border-radius: 5px; font-size: 11px; font-weight: 700; 
-    margin-top: 6px; border: 1px solid rgba(168,85,247,0.2); 
+  .admin-badge {
+    display: inline-block; padding: 2px 9px; background: rgba(168,85,247,0.1); color: var(--accent-light);
+    border-radius: 5px; font-size: 11px; font-weight: 700; margin-top: 6px; border: 1px solid rgba(168,85,247,0.2);
   }
-  
+  .admin-badge.owner { background: rgba(251,191,36,0.12); color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+
   .faq { max-width: 800px; margin: 0 auto; }
-  .faq-item { 
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px; 
-    margin-bottom: 10px; overflow: hidden; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.2); 
+  .faq-item { margin-bottom: 10px; overflow: hidden; border-radius: 12px; }
+  .faq-q {
+    width: 100%; padding: 18px 22px; cursor: pointer; font-weight: 600; font-size: 15.5px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    background: none; border: none; color: inherit; font-family: inherit; text-align: left;
   }
-  .faq-q { padding: 18px 22px; cursor: pointer; font-weight: 600; font-size: 15.5px; display: flex; justify-content: space-between; align-items: center; }
-  .faq-q .arrow { color: var(--accent-light); font-size: 22px; transition: transform 0.3s; }
+  .faq-q .arrow { color: var(--accent-light); font-size: 22px; transition: transform 0.3s; flex-shrink: 0; }
   .faq-item.open .arrow { transform: rotate(45deg); }
   .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--muted); font-size: 14.5px; padding: 0 22px; }
-  .faq-item.open .faq-a { max-height: 400px; padding: 0 22px 20px; }
+  .faq-item.open .faq-a { max-height: 600px; padding: 0 22px 20px; }
+  .faq-a code { background: var(--bg-2); padding: 2px 6px; border-radius: 4px; color: var(--accent-light); }
+  .faq-footer { text-align: center; margin-top: 30px; color: var(--muted); }
+  .faq-footer .btn { margin-top: 12px; }
 
-  .bans-wrap { 
-    max-width: 1000px; margin: 0 auto; background: var(--card); 
-    border: 1px solid var(--border); border-radius: 14px; overflow: hidden; 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2); 
+  .bans-tools { max-width: 1000px; margin: 0 auto 14px; }
+  .bans-tools input {
+    width: 100%; padding: 12px 15px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-size: 15px; outline: none; font-family: inherit;
   }
-  .bans-table { width: 100%; border-collapse: collapse; }
+  .bans-tools input:focus { border-color: var(--accent); }
+  .bans-wrap { max-width: 1000px; margin: 0 auto; overflow-x: auto; border-radius: 14px; }
+  .bans-table { width: 100%; border-collapse: collapse; min-width: 620px; }
   .bans-table th { text-align: left; padding: 14px 18px; font-size: 12px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
   .bans-table td { padding: 14px 18px; font-size: 14px; border-bottom: 1px solid var(--border); }
-  .ban-perm { padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid transparent; }
+  .bans-table tr:last-child td { border-bottom: none; }
+  .bans-empty { text-align: center; color: var(--muted); padding: 30px !important; }
+  .ban-perm { padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
   .ban-perm.permanent { background: rgba(239,68,68,0.12); color: #ff7b78; border-color: rgba(239,68,68,0.3); }
   .ban-perm.temp { background: rgba(168,85,247,0.12); color: var(--accent-light); border-color: rgba(168,85,247,0.3); }
-  
-  /* Модалка */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(5,2,12,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; opacity: 0; transition: opacity .3s; }
-  .modal-overlay.active { display: flex; opacity: 1; }
-  .modal { 
-    background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px; 
-    padding: 32px; max-width: 440px; width: 100%; position: relative; 
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); 
+
+  /* ============ МОДАЛКА ЗАКАЗА ============ */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(5,2,12,0.8); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px;
+    padding: 32px; max-width: 440px; width: 100%; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6); animation: tabFadeIn .3s ease;
   }
   .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--muted); font-size: 26px; cursor: pointer; }
+  .modal-close:hover { color: var(--text); }
   .modal h3 { font-size: 20px; margin-bottom: 6px; }
   .modal .plan-tag { color: var(--accent-light); font-weight: 600; margin-bottom: 20px; font-size: 15px; }
   .modal label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-  .modal input, .modal select { 
-    width: 100%; padding: 12px 15px; margin-bottom: 14px; 
-    background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; 
-    color: var(--text); font-size: 15px; outline: none; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); 
+  .modal input, .modal select {
+    width: 100%; padding: 12px 15px; margin-bottom: 14px; background: var(--bg-2);
+    border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px;
+    outline: none; font-family: inherit;
   }
+  .modal input:focus, .modal select:focus { border-color: var(--accent); }
+  .modal input.invalid { border-color: var(--red); }
+  .modal .total { display: flex; justify-content: space-between; font-weight: 700; margin: 4px 0 14px; }
+  .modal .total b { font-size: 20px; color: var(--accent-light); }
   .modal .btn { width: 100%; margin-top: 6px; padding: 13px; }
 
-  /* Рулетка */
-  #caseModal { position: fixed; inset: 0; z-index: 500; background: rgba(5,2,12,0.94); backdrop-filter: blur(12px); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity .35s; }
-  #caseModal.active { display: flex; opacity: 1; }
-  .roulette-wrap { width: 100%; max-width: 1000px; position: relative; }
+  /* ============ РУЛЕТКА ============ */
+  #caseModal {
+    position: fixed; inset: 0; z-index: 500; background: rgba(5,2,12,0.94); backdrop-filter: blur(12px);
+    display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+  }
+  #caseModal.active { display: flex; animation: fadeIn .3s ease; }
+  .roulette-wrap { width: 100%; max-width: 1000px; }
   .roulette-header { text-align: center; margin-bottom: 28px; }
-  .roulette-header .title { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
-  .roulette-header .case-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
-  .roulette-track-wrap { position: relative; background: var(--bg-2); border: 1px solid var(--border-hi); border-radius: 14px; padding: 20px 0; overflow: hidden; box-shadow: inset 0 4px 24px rgba(0,0,0,0.6); }
+  .roulette-header .title { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 3px; margin-bottom: 6px; }
+  .roulette-header .case-name { font-size: 26px; font-weight: 800; }
+  .roulette-track-wrap {
+    position: relative; background: var(--bg-2); border: 1px solid var(--border-hi);
+    border-radius: 14px; padding: 20px 0; overflow: hidden; box-shadow: inset 0 4px 24px rgba(0,0,0,0.6);
+  }
   .roulette-track-wrap::before, .roulette-track-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 3; pointer-events: none; }
   .roulette-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-2), transparent); }
   .roulette-track-wrap::after { right: 0; background: linear-gradient(-90deg, var(--bg-2), transparent); }
   .roulette-pointer { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: var(--accent-light); z-index: 4; transform: translateX(-50%); box-shadow: 0 0 10px var(--accent-light); }
-  .roulette-pointer::before, .roulette-pointer::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; }
+  .roulette-pointer::before, .roulette-pointer::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); border-left: 9px solid transparent; border-right: 9px solid transparent; }
   .roulette-pointer::before { top: -2px; border-top: 11px solid var(--accent-light); }
   .roulette-pointer::after { bottom: -2px; border-bottom: 11px solid var(--accent-light); }
-  .roulette-track { display: flex; gap: 8px; will-change: transform; padding-left: 50vw; padding-right: 50vw; }
+  .roulette-track { display: flex; gap: 8px; will-change: transform; }
   .roulette-track.animate { transition: transform 5s cubic-bezier(0.12, 0.75, 0.15, 1); }
-  .roulette-item { flex-shrink: 0; width: 130px; height: 160px; background: var(--card); border: 1px solid var(--border-hi); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; position: relative; text-align: center; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); }
-  .roulette-item::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
-  .roulette-item.rar-consumer::before { background: var(--r-consumer); }
-  .roulette-item.rar-industrial::before { background: var(--r-industrial); }
-  .roulette-item.rar-milspec::before { background: var(--r-milspec); }
-  .roulette-item.rar-restricted::before { background: var(--r-restricted); }
-  .roulette-item.rar-classified::before { background: var(--r-classified); }
-  .roulette-item.rar-covert::before { background: var(--r-covert); }
-  .roulette-item.rar-rare::before { background: var(--r-rare); }
+  .roulette-item {
+    flex-shrink: 0; width: 130px; height: 160px; background: var(--card); border: 1px solid var(--border-hi);
+    border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; padding: 10px; position: relative; text-align: center;
+  }
+  .roulette-item::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--rc); border-radius: 0 0 10px 10px; }
   .roulette-item .item-emoji { font-size: 36px; }
   .roulette-item .item-name { font-size: 11px; font-weight: 600; line-height: 1.2; }
   .roulette-result { margin-top: 28px; text-align: center; opacity: 0; transform: translateY(16px); transition: 0.4s; }
   .roulette-result.show { opacity: 1; transform: none; }
-  .result-card { display: inline-block; padding: 22px 36px; background: var(--card); border: 2px solid var(--accent-light); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+  .result-card { display: inline-block; padding: 22px 36px; background: var(--card); border: 2px solid var(--rc, var(--accent-light)); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
   .result-card .res-emoji { font-size: 52px; margin-bottom: 8px; }
   .result-card .res-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .result-card .res-rarity { font-size: 13px; font-weight: 700; color: var(--rc); }
+  .roulette-actions { margin-top: 22px; display: flex; gap: 12px; justify-content: center; }
 
-  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--green); color: #04120a; padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 14.5px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform .4s; z-index: 700; }
+  /* ============ ТОСТ ============ */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(140px);
+    background: var(--green); color: #04120a; padding: 13px 26px; border-radius: 10px;
+    font-weight: 700; font-size: 14.5px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition: transform .4s; z-index: 700; max-width: calc(100% - 40px); text-align: center;
+  }
   .toast.show { transform: translateX(-50%) translateY(0); }
-
+  .toast.error { background: var(--red); color: #fff; }
+  .toast.warn { background: var(--yellow); color: #1a1000; }
+  .toast.info { background: var(--accent); color: #fff; }
   @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
 
-  /* ============ ЧАТ ПОДДЕРЖКИ ============ */
+  /* ============ ЧАТ ============ */
   .chat-fab {
-    position: fixed; bottom: 24px; right: 24px;
-    width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(180deg, #e9d5ff 0%, #c4b5fd 100%);
-    color: #1e0f37; display: flex; align-items: center; justify-content: center;
-    font-size: 24px; cursor: pointer; z-index: 100; 
-    border-top: 1px solid #fff; border-bottom: 1px solid #a78bfa;
-    box-shadow: 0 4px 20px rgba(196,181,253,0.5);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background 0.3s;
+    position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(180deg, #e9d5ff 0%, #c4b5fd 100%); color: #1e0f37;
+    display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
+    z-index: 100; border: none; box-shadow: 0 4px 20px rgba(196,181,253,0.5);
+    transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275), background 0.3s;
     animation: fabPulse 2s infinite;
   }
-  .chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 25px rgba(196,181,253,0.7); }
-  .chat-fab.open { 
-    animation: none; 
-    background: linear-gradient(180deg, #ff7b78 0%, #ef4444 100%);
-    color: #fff;
-    border-bottom-color: #b91c1c;
-    transform: rotate(90deg) scale(0.95);
-    box-shadow: 0 4px 15px rgba(239,68,68,0.5);
-  }
+  .chat-fab:hover { transform: scale(1.08); }
+  .chat-fab.open { animation: none; background: linear-gradient(180deg, #ff7b78 0%, #ef4444 100%); color: #fff; transform: rotate(90deg) scale(0.95); }
   @keyframes fabPulse {
     0% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 0 rgba(196,181,253,0.6); }
     70% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 15px rgba(196,181,253,0); }
     100% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 0 rgba(196,181,253,0); }
   }
-
   .chat-widget {
-    position: fixed;
-    bottom: 90px; right: 24px;
-    width: 340px;
-    height: 480px;
-    background: var(--card);
-    border: 1px solid var(--border-hi);
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    z-index: 99;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-    transform-origin: bottom right;
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    position: fixed; bottom: 90px; right: 24px; width: 340px; height: 480px; max-height: calc(100vh - 120px);
+    background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px;
+    display: flex; flex-direction: column; z-index: 99; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    transform-origin: bottom right; transform: scale(0); opacity: 0; pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.3s;
   }
-  .chat-widget.active {
-    transform: scale(1);
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
+  .chat-widget.active { transform: scale(1); opacity: 1; pointer-events: auto; }
   .chat-header {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-2);
-    border-radius: 16px 16px 0 0;
+    padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center;
+    justify-content: space-between; background: var(--bg-2); border-radius: 16px 16px 0 0;
   }
-  .chat-title {
-    font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;
-  }
-  .chat-status-dot {
-    width: 8px; height: 8px; background: var(--green); border-radius: 50%;
-    box-shadow: 0 0 8px var(--green); animation: pulse 1.5s infinite;
-  }
-  .chat-close {
-    background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer;
-    transition: 0.2s; line-height: 1;
-  }
+  .chat-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .chat-status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
+  .chat-close { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
   .chat-close:hover { color: var(--text); }
-
   .chat-messages {
-    flex: 1;
-    padding: 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-hi) transparent;
+    flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+    scrollbar-width: thin; scrollbar-color: var(--border-hi) transparent;
   }
-  .chat-messages::-webkit-scrollbar { width: 6px; }
-  .chat-messages::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
-
-  .chat-msg {
-    max-width: 85%;
-    display: flex;
-    flex-direction: column;
-    animation: msgIn 0.3s ease-out;
-  }
-  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  
+  .chat-msg { max-width: 85%; display: flex; flex-direction: column; animation: msgIn 0.3s ease-out; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .chat-msg.support { align-self: flex-start; }
   .chat-msg.user { align-self: flex-end; align-items: flex-end; }
-  
-  .msg-bubble {
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.4;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  .msg-bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+  .msg-bubble a { color: var(--accent-light); }
+  .chat-msg.support .msg-bubble { background: var(--bg-2); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: #d1c8e3; }
+  .chat-msg.user .msg-bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+  .msg-time { font-size: 10px; color: var(--muted); margin: 4px 4px 0; }
+  .chat-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chat-quick button {
+    padding: 6px 10px; border-radius: 100px; font-size: 12px; font-family: inherit; cursor: pointer;
+    background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: var(--accent-light);
   }
-  .chat-msg.support .msg-bubble {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-bottom-left-radius: 4px;
-    color: #d1c8e3;
-  }
-  .chat-msg.user .msg-bubble {
-    background: var(--accent);
-    color: #fff;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 2px 10px rgba(168,85,247,0.3);
-  }
-  .msg-time {
-    font-size: 10px; color: var(--muted); margin-top: 4px; margin-left: 4px; margin-right: 4px;
-  }
-
+  .chat-quick button:hover { background: rgba(168,85,247,0.2); }
   .typing-indicator {
-    display: flex; gap: 4px; padding: 12px 14px; background: var(--bg-2);
-    border: 1px solid var(--border); border-radius: 12px; border-bottom-left-radius: 4px;
-    width: fit-content; align-self: flex-start;
+    display: flex; gap: 4px; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; border-bottom-left-radius: 4px; width: fit-content; align-self: flex-start;
   }
-  .typing-indicator span {
-    width: 6px; height: 6px; background: var(--muted); border-radius: 50%;
-    animation: typing 1.4s infinite ease-in-out both;
-  }
+  .typing-indicator span { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
   .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
   .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes typing {
-    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-
-  .chat-input-area {
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-2);
-    border-radius: 0 0 16px 16px;
-    display: flex;
-    gap: 8px;
-  }
+  @keyframes typing { 0%,80%,100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+  .chat-input-area { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-2); border-radius: 0 0 16px 16px; display: flex; gap: 8px; }
   .chat-input-area input {
-    flex: 1;
-    background: var(--card);
-    border: 1px solid var(--border-hi);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    flex: 1; background: var(--card); border: 1px solid var(--border-hi); border-radius: 8px;
+    padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit;
   }
   .chat-input-area input:focus { border-color: var(--accent); }
   .chat-input-area button {
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    width: 40px;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-    box-shadow: 0 2px 8px rgba(168,85,247,0.4);
+    background: var(--accent); border: none; border-radius: 8px; width: 40px; color: #fff;
+    font-size: 18px; cursor: pointer; transition: 0.2s;
   }
-  .chat-input-area button:hover { background: var(--accent-light); transform: scale(1.05); }
-  .chat-input-area button:active { transform: scale(0.95); }
+  .chat-input-area button:hover { background: var(--accent-light); }
 
-  /* Адаптив */
+  /* ============ АДАПТИВ ============ */
   @media (max-width: 1200px) { .servers-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 992px) {
-    .middle-grid { grid-template-columns: 1fr; }
-    .top-banners { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
+    .middle-grid, .top-banners { grid-template-columns: 1fr; }
+    .nav-inner { flex-wrap: wrap; row-gap: 10px; }
+    .nav-links { order: 3; width: 100%; }
+    .cases-hero { grid-template-columns: 1fr; text-align: center; }
+    .free-timer { justify-content: center; }
+    .big-case { font-size: 90px; order: -1; }
   }
   @media (max-width: 768px) {
     .servers-grid { grid-template-columns: repeat(2, 1fr); }
-    .hero-slider { min-height: 250px; padding: 24px; }
+    .hero-slider { min-height: 260px; padding: 24px; }
     .hero-content h1 { font-size: 24px; }
     .slider-arrows { display: none; }
+    .slider-dots { left: 24px; }
     .chat-widget { width: calc(100% - 48px); bottom: 85px; }
+    .roulette-item { width: 104px; height: 136px; }
+    .cases-hero { padding: 26px; }
   }
   @media (max-width: 480px) {
     .servers-grid { grid-template-columns: 1fr; }
+    .server-card { aspect-ratio: auto; height: 220px; }
     .nav-actions .btn-orange { display: none; }
+    .main-container { padding: 0 14px; }
+    section.inner-page { padding: 30px 14px 60px; }
   }
-    /* ================= МАГАЗИН ================= */
-  .shop-section { margin-top: 40px; padding-bottom: 40px; }
-  .page-head { text-align: center; margin-bottom: 30px; }
-  .page-head h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
-  .page-head .tagline { display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent-light); letter-spacing: 2px; padding: 6px 14px; border-radius: 100px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.28); margin-bottom: 14px; }
-  
-  .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-  .shop-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px; position: relative;
-    transition: 0.3s; display: flex; flex-direction: column;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }
-  .shop-card:hover { transform: translateY(-5px); background: var(--card-2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-  .shop-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
-  
-  .shop-card.vip { border-color: rgba(168,85,247,0.4); }
-  .shop-card.vip .shop-icon { background: rgba(168,85,247,0.15); color: var(--accent-light); }
-  .shop-card.vip h3 { color: var(--accent-light); }
-  
-  .shop-card.premium { border-color: rgba(59,130,246,0.4); }
-  .shop-card.premium .shop-icon { background: rgba(59,130,246,0.15); color: #78b0ff; }
-  .shop-card.premium h3 { color: #78b0ff; }
-  
-  .shop-card.admin { border-color: rgba(239,68,68,0.4); }
-  .shop-card.admin .shop-icon { background: rgba(239,68,68,0.15); color: #ff7b78; }
-  .shop-card.admin h3 { color: #ff7b78; }
-
-  .shop-card h3 { font-size: 20px; margin-bottom: 6px; font-weight: 800; }
-  .shop-card > p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
-  
-  .shop-features { list-style: none; margin-bottom: 24px; flex-grow: 1; }
-  .shop-features li { font-size: 13px; color: #d1c8e3; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  .shop-features li::before { content: '✓'; color: var(--green); font-weight: bold; }
-  
-  .shop-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 16px; }
-  .shop-price .amount { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
-  .shop-price .cur { color: var(--muted); font-size: 16px; font-weight: 600; }
-  
-  .btn-buy { width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; color: #fff; }
-  .btn-buy.vip { background: linear-gradient(180deg, #a855f7, #7c3aed); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
-  .btn-buy.premium { background: linear-gradient(180deg, #3b82f6, #2563eb); box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
-  .btn-buy.admin { background: linear-gradient(180deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(220,38,38,0.4); }
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <div class="nav-inner">
     <a href="#/" class="logo">BAZA</a>
-    
     <ul class="nav-links">
-      <li><div class="online-badge"><span id="navOnline">30</span></div></li>
+      <li><div class="online-badge"><span id="navOnline">0 онлайн</span></div></li>
       <li><a href="#/shop" data-route="/shop">👑 Донат</a></li>
-      <li><a href="#/admins" data-route="/admins">🎮 Игроки</a></li>
+      <li><a href="#/admins" data-route="/admins">🛡️ Администрация</a></li>
       <li><a href="#/rules" data-route="/rules">📜 Правила</a></li>
-      <li><a href="#/faq" data-route="/faq">🎫 Тикеты</a></li>
-      <li><a href="#/bans" data-route="/bans">🛡️ Баны</a></li>
+      <li><a href="#/faq" data-route="/faq">❓ FAQ</a></li>
+      <li><a href="#/bans" data-route="/bans">⛔ Баны</a></li>
     </ul>
-
     <div class="nav-actions">
-      <button class="btn btn-orange" onclick="showToast('Функция в разработке')">💰 Пополнить</button>
-      <button class="btn btn-purple" onclick="showToast('Функция в разработке')">🔑 Войти</button>
+      <button class="btn btn-orange" onclick="showToast('Пополнение баланса скоро появится', 'info')">💰 Пополнить</button>
+      <button class="btn btn-purple" onclick="showToast('Вход через Steam скоро появится', 'info')">🔑 Войти</button>
     </div>
   </div>
 </nav>
 
-<!-- MAIN CONTENT -->
-<main id="page-root" class="main-container">
-  <!-- JS will render pages here -->
-</main>
+<main id="page-root" class="main-container"></main>
 
-<!-- CHAT WIDGET -->
-<div class="chat-widget" id="chatWidget">
+<div class="chat-widget" id="chatWidget" role="dialog" aria-label="Помощь">
   <div class="chat-header">
-    <div class="chat-title">
-      <div class="chat-status-dot"></div> Поддержка BAZA
-    </div>
-    <button class="chat-close" onclick="toggleChat()">×</button>
+    <div class="chat-title"><div class="chat-status-dot"></div> Помощник BAZA</div>
+    <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть">×</button>
   </div>
-  <div class="chat-messages" id="chatMessages">
-    <!-- Welcome message -->
-    <div class="chat-msg support">
-      <div class="msg-bubble">Привет! Я виртуальный помощник. Чем могу помочь?</div>
-      <div class="msg-time">Только что</div>
-    </div>
-  </div>
+  <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="Сообщение..." onkeypress="handleChatEnter(event)">
-    <button onclick="sendChatMessage()">➤</button>
+    <input type="text" id="chatInput" placeholder="Например: как зайти на сервер?" autocomplete="off">
+    <button onclick="sendChatMessage()" aria-label="Отправить">➤</button>
   </div>
 </div>
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Помощь">💬</button>
 
-<!-- CHAT FAB -->
-<div class="chat-fab" id="chatFab" onclick="toggleChat()">💬</div>
-
-<!-- MODALS -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h3>Оформление заказа</h3>
-    <div class="plan-tag" id="modalPlan">VIP — 199 ₽</div>
-    <label>Ваш STEAM ID или ссылка</label>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" onclick="closeModal()" aria-label="Закрыть">×</button>
+    <h3 id="modalTitle">Оформление заказа</h3>
+    <div class="plan-tag" id="modalPlan">VIP</div>
+    <label for="orderSteam">Ваш Steam ID или ссылка на профиль</label>
     <input type="text" placeholder="STEAM_0:1:12345678" id="orderSteam">
-    <label>Способ связи</label>
+    <label for="orderContact">Способ связи (необязательно)</label>
     <input type="text" placeholder="@username в Telegram" id="orderContact">
-    <label>Срок</label>
+    <label for="orderPeriod">Срок</label>
     <select id="orderPeriod">
       <option value="1">1 месяц</option>
       <option value="3">3 месяца (−10%)</option>
+      <option value="6">6 месяцев (−20%)</option>
     </select>
-    <button class="btn btn-primary" onclick="submitOrder()">Перейти к оплате</button>
+    <div class="total"><span>Итого:</span><b id="orderTotal">0 ₽</b></div>
+    <button class="btn btn-primary" id="orderSubmit" onclick="submitOrder()">Перейти к оплате</button>
   </div>
 </div>
 
@@ -914,7 +675,7 @@
   <div class="roulette-wrap">
     <div class="roulette-header">
       <div class="title">ОТКРЫТИЕ КЕЙСА</div>
-      <div class="case-name" id="rouletteCaseName">Bronze Case</div>
+      <div class="case-name" id="rouletteCaseName">—</div>
     </div>
     <div class="roulette-track-wrap">
       <div class="roulette-pointer"></div>
@@ -927,858 +688,503 @@
         <div class="res-rarity" id="resRarity">—</div>
       </div>
     </div>
-    <div class="roulette-actions" style="margin-top:22px; display:flex; gap:12px; justify-content:center;">
+    <div class="roulette-actions">
       <button class="btn btn-primary" id="closeCaseBtn" onclick="closeCaseModal()" style="display:none;">Забрать приз</button>
       <button class="btn btn-outline" id="openAgainBtn" onclick="openAgain()" style="display:none;">Открыть ещё</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast">Готово!</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-  const SERVER_IP = '185.230.140.77:27015';
-  const FREE_CASE_COOLDOWN = 2 * 60 * 60 * 1000;
-  const FREE_CASE_KEY = 'dm_free_case_last_open';
+/* =====================================================================
+   НАСТРОЙКИ И ДАННЫЕ — правьте только этот блок
+   ===================================================================== */
+const CONFIG = {
+  telegram: 'https://t.me/baza_cs2',      // TODO: ваша ссылка
+  discord:  'https://discord.gg/baza',    // TODO: ваша ссылка
+  support:  'https://t.me/baza_support',  // TODO: живая поддержка
+  orderEndpoint: '',                      // TODO: например '/api/order' — пока пусто, оплата не подключена
+};
 
-  /* ============ ЧАТ ПОДДЕРЖКИ ============ */
-  const chatWidget = document.getElementById('chatWidget');
-  const chatFab = document.getElementById('chatFab');
-  const chatMessages = document.getElementById('chatMessages');
-  const chatInput = document.getElementById('chatInput');
-  let chatInitialized = false;
+// TODO: реальные IP и порты. Онлайн пока статичный — позже его будет отдавать бэкенд.
+const SERVERS = [
+  { name: 'Public #1', map: 'de_mirage',    ip: '185.230.140.77:27015', bg: 'public', players: 18, max: 32 },
+  { name: 'Retake #1', map: 'de_inferno',   ip: '185.230.140.77:27016', bg: 'retake', players: 9,  max: 10 },
+  { name: 'AWP',       map: 'awp_lego_2',   ip: '185.230.140.77:27017', bg: 'awp',    players: 12, max: 20 },
+  { name: 'Duels',     map: 'aim_map',      ip: '185.230.140.77:27018', bg: 'duels',  players: 0,  max: 16 },
+  { name: 'Fun',       map: 'fy_pool_day',  ip: '185.230.140.77:27019', bg: 'fun',    players: 9,  max: 24 },
+  { name: 'Sandstone', map: 'de_sandstone', ip: '185.230.140.77:27020', bg: 'sand',   players: 9,  max: 20 },
+];
 
-  function toggleChat() {
-    const isOpen = chatWidget.classList.contains('active');
-    
-    if (isOpen) {
-      chatWidget.classList.remove('active');
-      chatFab.classList.remove('open');
-      chatFab.innerHTML = '💬';
-    } else {
-      chatWidget.classList.add('active');
-      chatFab.classList.add('open');
-      chatFab.innerHTML = '×';
-      
-      // Скролл вниз при открытии
-      setTimeout(() => {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 100);
-      
-      // Фокус на инпут
-      if (window.innerWidth > 768) {
-        chatInput.focus();
-      }
-    }
+const PLANS = [
+  { id: 'vip', name: 'VIP', icon: '👑', price: 199, desc: 'Базовый набор привилегий', features: [
+    'Префикс [VIP] в чате', 'Цветной ник', 'Доступ к !vip меню', 'Приоритет в очереди' ]},
+  { id: 'premium', name: 'PREMIUM', icon: '💎', price: 499, hit: true, desc: 'Максимум возможностей', features: [
+    'Всё из VIP', 'Анимированный префикс', 'Резервный слот на полном сервере', 'Защита от кика за AFK' ]},
+  { id: 'admin', name: 'ADMIN', icon: '🛡️', price: 999, desc: 'Помогай поддерживать порядок', features: [
+    'Всё из PREMIUM', 'Админ-меню (kick, mute)', 'Тег [ADMIN] в чате', 'Голосование за смену карты' ]},
+];
+const PERIOD_DISCOUNT = { 1: 0, 3: 0.10, 6: 0.20 };
+
+const SLIDES = [
+  { title: 'Магазин привилегий', text: 'Приобрети привилегию и наслаждайся игрой с бонусами на всех серверах BAZA.', btn: '↗ За покупками', href: '#/shop' },
+  { title: 'Бесплатный кейс', text: 'Каждые 2 часа — бесплатное открытие кейса. Заходи и забирай приз!', btn: '🎁 Открыть кейс', href: '#/shop?cases' },
+  { title: 'Наш Telegram', text: 'Новости, розыгрыши и ваучеры — первыми узнают подписчики.', btn: '✈️ Подписаться', href: CONFIG.telegram, external: true },
+];
+
+const DONATORS = {
+  week:  [ { n: 'neverlie', d: 'PREMIUM · 1 месяц', c: 'gold' }, { n: "MaJleHbkuu' SnipeR", d: 'VIP · 3 месяца', c: 'purple' }, { n: 'geminikim183', d: 'VIP · 1 месяц', c: 'blue' } ],
+  month: [ { n: 'Vortex', d: 'ADMIN · 1 месяц', c: 'gold' }, { n: 'neverlie', d: 'PREMIUM · 1 месяц', c: 'purple' }, { n: 'kirpich228', d: 'PREMIUM · 1 месяц', c: 'blue' } ],
+  all:   [ { n: 'Vortex', d: 'С проектом с 2024', c: 'gold' }, { n: 'neverlie', d: 'С проектом с 2024', c: 'purple' }, { n: 'Shadow_FX', d: 'С проектом с 2025', c: 'blue' } ],
+};
+
+const RULES = [
+  'Подключаясь к игровым серверам проекта BAZA-CS2 или посещая официальный сайт проекта, вы автоматически соглашаетесь с данными правилами и обязуетесь их соблюдать.',
+  'Правила проекта обязательны для всех игроков вне зависимости от возраста, пола, национальности, уровня привилегий или вероисповедания.',
+  'Игроком считается любое лицо, подключившееся к игровому серверу. Администрация наравне с игроками с привилегиями несёт ответственность за нарушение правил.',
+  'Руководство проекта BAZA-CS2 оставляет за собой право заблокировать аккаунт участника или доступ к Discord-серверу проекта в целях поддержания порядка, даже при отсутствии прямого нарушения сформулированных правил, если поведение участника угрожает комьюнити.',
+  'Правила действуют на всех игровых серверах проекта BAZA-CS2 без исключений.',
+  'Администрация вправе применять наказания без предварительного предупреждения, если нарушение очевидно или носит грубый характер.',
+  'Высшая администрация оставляет за собой право в исключительном порядке заблокировать игрока без объяснения причин.',
+];
+
+const ADMINS = [
+  { n: 'Vitalik_CS', r: 'Главный администратор', b: 'OWNER' },
+  { n: 'Andrey',     r: 'Старший администратор', b: 'SR.ADMIN' },
+  { n: 'MaxPower',   r: 'Модератор', b: 'ADMIN' },
+  { n: 'Kseniya',    r: 'Модератор', b: 'ADMIN' },
+];
+
+const BANS = [
+  { n: 'NikitkaPro', r: 'Wallhack',    a: 'Andrey',  d: '2025-11-20', p: 'permanent', pn: 'Навсегда' },
+  { n: 'ToxicBoy',   r: 'Оскорбления', a: 'Kseniya', d: '2025-11-18', p: 'temp',      pn: '7 дней' },
+];
+
+const RARITY = {
+  consumer:   { label: 'Ширпотреб',      weight: 40 },
+  industrial: { label: 'Промышленное',   weight: 30 },
+  milspec:    { label: 'Армейское',      weight: 20 },
+  restricted: { label: 'Запрещённое',    weight: 12 },
+  classified: { label: 'Засекреченное',  weight: 6 },
+  covert:     { label: 'Тайное',         weight: 3 },
+  rare:       { label: 'Редкий предмет', weight: 1 },
+};
+
+// Внимание: розыгрыш в браузере только для демо. Боевой розыгрыш должен идти на сервере.
+const CASES = {
+  free: { name: 'Бесплатный кейс', emoji: '🎁', price: 0, items: [
+    { name: 'P250 | Sand Dune', emoji: '🔫', rarity: 'consumer' },
+    { name: 'MP7 | Skulls', emoji: '🔫', rarity: 'industrial' },
+    { name: 'Скидка 20%', emoji: '🏷️', rarity: 'milspec' },
+    { name: 'AK-47 | Redline', emoji: '🔫', rarity: 'classified' },
+    { name: 'AWP | Asiimov', emoji: '🎯', rarity: 'covert' },
+    { name: 'VIP на 3 дня', emoji: '👑', rarity: 'rare' },
+  ]},
+  bronze: { name: 'Bronze Case', emoji: '📦', price: 99, items: [
+    { name: 'MP7 | Skulls', emoji: '🔫', rarity: 'industrial' },
+    { name: 'Glock-18 | Water Elemental', emoji: '🔫', rarity: 'restricted' },
+    { name: 'USP-S | Cortex', emoji: '🔫', rarity: 'classified' },
+    { name: 'AK-47 | Fire Serpent', emoji: '🔫', rarity: 'covert' },
+  ]},
+  silver: { name: 'Silver Case', emoji: '🥈', price: 299, items: [
+    { name: 'M4A1-S | Decimator', emoji: '🔫', rarity: 'restricted' },
+    { name: 'Deagle | Printstream', emoji: '🔫', rarity: 'classified' },
+    { name: 'AK-47 | Bloodsport', emoji: '🔫', rarity: 'covert' },
+    { name: 'Karambit | Doppler', emoji: '🔪', rarity: 'rare' },
+  ]},
+  gold: { name: 'Gold Case', emoji: '🥇', price: 799, items: [
+    { name: 'AK-47 | Vulcan', emoji: '🔫', rarity: 'classified' },
+    { name: 'M4A4 | Howl', emoji: '🔫', rarity: 'covert' },
+    { name: 'M9 Bayonet | Fade', emoji: '🔪', rarity: 'rare' },
+    { name: 'PREMIUM на 7 дней', emoji: '💎', rarity: 'rare' },
+  ]},
+};
+
+const FREE_CASE_COOLDOWN = 2 * 60 * 60 * 1000;
+const FREE_CASE_KEY = 'baza_free_case_last_open';
+
+/* =====================================================================
+   УТИЛИТЫ
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+const totalOnline = () => SERVERS.reduce((sum, s) => sum + s.players, 0);
+const fmtPrice = (n) => n.toLocaleString('ru-RU') + ' ₽';
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    ta.remove();
   }
+  showToast(`IP скопирован: ${text}`);
+}
 
-  function handleChatEnter(e) {
-    if (e.key === 'Enter') sendChatMessage();
-  }
-
-  function sendChatMessage() {
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    // Добавляем сообщение пользователя
-    addChatMessage(text, 'user');
-    chatInput.value = '';
-
-    // Показываем индикатор "печатает..."
-    const typingId = showTypingIndicator();
-
-    // Симуляция ответа админа
-    setTimeout(() => {
-      removeTypingIndicator(typingId);
-      
-      const responses = [
-        "Привет! Администратор уже в пути.",
-        "Пожалуйста, подождите пару минут, я уточню информацию.",
-        "Ваш вопрос принят. Чем еще могу помочь?",
-        "Для решения этого вопроса напишите нам в Telegram: @baza_support",
-        "Спасибо за обращение! Скоро ответим."
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      addChatMessage(randomResponse, 'support');
-    }, 1500 + Math.random() * 1000);
-  }
-
-  function addChatMessage(text, sender) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `chat-msg ${sender}`;
-    
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    msgDiv.innerHTML = `
-      <div class="msg-bubble">${escapeHtml(text)}</div>
-      <div class="msg-time">${time}</div>
-    `;
-    
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function showTypingIndicator() {
-    const id = 'typing-' + Date.now();
-    const div = document.createElement('div');
-    div.id = id;
-    div.className = 'typing-indicator';
-    div.innerHTML = '<span></span><span></span><span></span>';
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    return id;
-  }
-
-  function removeTypingIndicator(id) {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  }
-
-  function escapeHtml(text) {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return text.replace(/[&<>"']/g, m => map[m]);
-  }
-
-  /* ============ СТРАНИЦЫ ============ */
-  const pages = {};
-
-  // ГЛАВНАЯ (BAZA)
-  pages['/'] = () => `
-    <div class="top-banners">
-      <div class="banner-card">
+/* =====================================================================
+   ШАБЛОНЫ
+   ===================================================================== */
+function serverCardHtml(s) {
+  const pct = Math.round(s.players / s.max * 100);
+  const state = s.players === 0 ? 'empty' : s.players >= s.max ? 'full' : '';
+  return `
+    <div class="server-card">
+      <div class="server-bg bg-${s.bg}"></div>
+      <div class="server-content">
         <div>
-          <h3>Вступи в Telegram</h3>
-          <p>Выдача ваучеров</p>
+          <div class="server-title">${esc(s.name)}</div>
+          <div class="server-map">${esc(s.map)}</div>
         </div>
-        <div class="banner-icon tg-icon">✈️</div>
+        <div>
+          <div class="server-status ${state}">${s.players}/${s.max}${state === 'full' ? ' · полный' : ''}</div>
+          <div class="server-bar"><span style="width:${pct}%"></span></div>
+          <div class="server-actions">
+            <a class="srv-btn play" href="steam://connect/${s.ip}">▶ Играть</a>
+            <button class="srv-btn" data-copy="${s.ip}" title="Скопировать IP">IP</button>
+          </div>
+        </div>
       </div>
-      <div class="banner-card">
-        <div>
-          <h3>Discord сервер CS2</h3>
-          <p>Заходи к нам</p>
-        </div>
-        <div class="banner-icon dc-icon">🎮</div>
+    </div>`;
+}
+
+function donatorsHtml(period) {
+  return DONATORS[period].map((d, i) => `
+    <div class="donator-item">
+      <div class="donator-avatar">${esc(d.n[0].toUpperCase())}</div>
+      <div class="donator-info">
+        <div class="donator-name ${d.c}">${esc(d.n)}</div>
+        <div class="donator-desc">${esc(d.d)}</div>
+      </div>
+      <div class="donator-rank">#${i + 1}</div>
+    </div>`).join('');
+}
+
+function slideHtml(s) {
+  const ext = s.external ? ' target="_blank" rel="noopener"' : '';
+  return `<h1>${esc(s.title)}</h1><p>${esc(s.text)}</p><a href="${s.href}" class="btn-hero"${ext}>${esc(s.btn)}</a>`;
+}
+
+function planCardHtml(p) {
+  return `
+    <div class="shop-card ${p.id}">
+      ${p.hit ? '<span class="hit">ХИТ</span>' : ''}
+      <div class="shop-icon">${p.icon}</div>
+      <h3>${esc(p.name)}</h3>
+      <p>${esc(p.desc)}</p>
+      <div class="shop-price"><span class="amount">${p.price}</span><span class="cur">₽ / мес</span></div>
+      <ul>${p.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+      <button class="btn ${p.hit ? 'btn-primary' : 'btn-outline'}" data-buy="${p.id}">Купить</button>
+    </div>`;
+}
+
+/* =====================================================================
+   СТРАНИЦЫ
+   ===================================================================== */
+const pages = {};
+
+pages['/'] = () => `
+  <div class="top-banners">
+    <a class="banner-card card-base" href="${CONFIG.telegram}" target="_blank" rel="noopener">
+      <div><h3>Вступи в Telegram</h3><p>Новости и выдача ваучеров</p></div>
+      <div class="banner-icon tg-icon">✈️</div>
+    </a>
+    <a class="banner-card card-base" href="${CONFIG.discord}" target="_blank" rel="noopener">
+      <div><h3>Discord сервер</h3><p>Общение, поиск тиммейтов, поддержка</p></div>
+      <div class="banner-icon dc-icon">🎮</div>
+    </a>
+  </div>
+
+  <div class="middle-grid">
+    <aside class="donators-card card-base">
+      <div class="donators-header">Топ донатеров</div>
+      <div class="donators-toggle" id="donatorsToggle">
+        <button class="active" data-period="week">7 дней</button>
+        <button data-period="month">30 дней</button>
+        <button data-period="all">Всё время</button>
+      </div>
+      <div id="donatorsList">${donatorsHtml('week')}</div>
+    </aside>
+
+    <div class="hero-slider">
+      <div class="hero-bg"></div>
+      <div class="hero-art"></div>
+      <div class="slider-dots" id="sliderDots">
+        ${SLIDES.map((_, i) => `<button data-slide="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Слайд ${i + 1}"></button>`).join('')}
+      </div>
+      <div class="hero-content" id="heroContent">${slideHtml(SLIDES[0])}</div>
+      <div class="slider-arrows">
+        <button data-dir="-1" aria-label="Назад">‹</button>
+        <button data-dir="1" aria-label="Вперёд">›</button>
       </div>
     </div>
+  </div>
 
-    <div class="middle-grid">
-      <!-- Топ донатеров -->
-      <div class="donators-card">
-        <div class="donators-header">
-          <span>Топ донатеров за</span>
-          <span style="color:var(--border-hi); cursor:pointer;">?</span>
-        </div>
-        <div class="donators-toggle">
-          <button class="active">7 дней</button>
-          <button>30 дней</button>
-          <button>Всё время</button>
-        </div>
-        
-        <div class="donator-item">
-          <div class="donator-avatar">😎</div>
-          <div class="donator-info">
-            <div class="donator-name gold">neverlie</div>
-            <div class="donator-desc">1 месяц</div>
-          </div>
-          <div class="donator-rank">#1</div>
-        </div>
-        <div class="donator-item">
-          <div class="donator-avatar" style="background:#1e3a8a;">👤</div>
-          <div class="donator-info">
-            <div class="donator-name purple">MaJleHbkuu' SnipeR</div>
-            <div class="donator-desc">2 место</div>
-          </div>
-          <div class="donator-rank">#2</div>
-        </div>
-        <div class="donator-item">
-          <div class="donator-avatar" style="background:#374151;">?</div>
-          <div class="donator-info">
-            <div class="donator-name blue">geminikim183</div>
-            <div class="donator-desc">3 место</div>
-          </div>
-          <div class="donator-rank">#3</div>
-        </div>
-      </div>
+  <div class="section-title">
+    <h2>Наши сервера</h2>
+    <span>Сейчас играют: <b>${totalOnline()}</b></span>
+  </div>
+  <div class="servers-grid">${SERVERS.map(serverCardHtml).join('')}</div>
 
-      <!-- Слайдер -->
-      <div class="hero-slider">
-        <div class="hero-bg"></div>
-        <div class="hero-art"></div>
-        <div class="hero-content">
-          <h1>Магазин привилегий</h1>
-          <p>Приобрети привилегию на нужном сервере и наслаждайся игрой с бонусами!</p>
-          <a href="#/shop" class="btn-hero">↗ За покупками</a>
-        </div>
-        <div class="slider-arrows">
-          <button>‹</button>
-          <button>›</button>
-        </div>
-      </div>
-    </div>
+  <div class="bottom-desc card-base">
+    <h2>Сервера Counter-Strike 2 (КС2) — BAZA-CS2</h2>
+    <p>BAZA-CS2 — проект серверов Counter-Strike 2 с мониторингом онлайна, статистикой игроков и кланами. Выберите подходящий сервер из списка выше и нажмите «Играть» — игра запустится и подключится автоматически. Если не сработало, скопируйте IP и введите в консоли <b>connect IP</b>.</p>
+  </div>
+`;
 
-    <!-- Сетка серверов -->
-          <div class="server-card">
-        <div class="server-bg bg-public"></div>
-        <div class="server-content">
-          <div class="server-title">Public #1</div>
-          <div class="server-status">18/32</div>
-        </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-duels"></div>
-        <div class="server-content">
-          <div class="server-title">Retake #1</div>
-          <div class="server-status">9/10</div>
-        </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-fun"></div>
-        <div class="server-content">
-          <div class="server-title">Danger Zone</div>
-          <div class="server-status">16/16</div>
-        </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-awp"></div>
-        <div class="server-content">
-          <div class="server-title">AWP Only</div>
-          <div class="server-status">12/20</div>
-        </div>
-      </div>
-              <!-- МАГАЗИН -->
-    <section class="shop-section">
+pages['/shop'] = () => `
+  <section class="inner-page">
+    <div class="container">
       <div class="page-head">
-        <div class="tagline">Магазин</div>
-        <h1>Привилегии</h1>
-        <p style="color: var(--muted); font-size: 15px;">Поддержи проект и получи уникальные возможности на серверах BAZA</p>
+        <div class="tagline">МАГАЗИН И КЕЙСЫ</div>
+        <h1>Магазин сервера</h1>
+        <p>Привилегии действуют на всех серверах проекта.</p>
       </div>
-      
-      <div class="shop-grid">
-        <!-- VIP -->
-        <div class="shop-card vip">
-          <div class="shop-icon">👑</div>
-          <h3>VIP</h3>
-          <p>Базовый статус для комфортной игры</p>
-          <ul class="shop-features">
-            <li>Цветной ник в чате</li>
-            <li>Доступ к !vip меню</li>
-            <li>Приоритет в очереди</li>
-            <li>+10 к лимиту брони</li>
-          </ul>
-          <div class="shop-price">
-            <span class="amount">199</span>
-            <span class="cur">₽ / мес</span>
-          </div>
-          <button class="btn-buy vip">Купить VIP</button>
+      <div class="shop-tabs-wrap">
+        <div class="shop-tabs">
+          <button class="shop-tab active" data-tab="shop">🛒 Привилегии</button>
+          <button class="shop-tab" data-tab="cases">🎁 Кейсы <span class="tab-badge">FREE</span></button>
         </div>
+      </div>
 
-        <!-- PREMIUM -->
-        <div class="shop-card premium">
-          <div class="shop-icon">💎</div>
-          <h3>Premium</h3>
-          <p>Максимум возможностей и уважение</p>
-          <ul class="shop-features">
-            <li>Все привилегии VIP</li>
-            <li>Своя модель игрока</li>
-            <li>Обход слотов (вход на полный сервер)</li>
-            <li>Доступ к Premium-меню</li>
-            <li>Защита от кика за AFK</li>
-          </ul>
-          <div class="shop-price">
-            <span class="amount">399</span>
-            <span class="cur">₽ / мес</span>
-          </div>
-          <button class="btn-buy premium">Купить Premium</button>
-        </div>
+      <div id="tab-shop" class="tab-panel">
+        <div class="shop-grid">${PLANS.map(planCardHtml).join('')}</div>
+      </div>
 
-        <!-- ADMIN -->
-        <div class="shop-card admin">
-          <div class="shop-icon">🛡️</div>
-          <h3>Админ</h3>
-          <p>Наведи порядок на сервере</p>
-          <ul class="shop-features">
-            <li>Все привилегии Premium</li>
-            <li>Полный доступ к админ-меню</li>
-            <li>Бан/Мут нарушителей</li>
-            <li>Телепорт к игрокам</li>
-            <li>Смена карты</li>
-          </ul>
-          <div class="shop-price">
-            <span class="amount">799</span>
-            <span class="cur">₽ / мес</span>
+      <div id="tab-cases" style="display:none;">
+        <div class="cases-hero">
+          <div>
+            <h2>Бесплатный кейс</h2>
+            <p style="color:var(--muted);">Раз в 2 часа — крути рулетку и получай приз.</p>
+            <div class="free-timer" id="freeTimer"></div>
+            <button class="btn btn-primary" id="freeCaseBtn" data-case="free" style="padding:14px 28px;">🎁 Открыть</button>
           </div>
-          <button class="btn-buy admin">Стать Админом</button>
+          <div class="big-case">🎁</div>
         </div>
-      </div>
-    </section>
-        </div>
-      </div>
-      <div class="server-card" onclick="connectServer()">
-        <div class="server-bg bg-fun"></div>
-        <div class="server-content">
-          <div class="server-title">FUN</div>
-          <div class="server-status">9 в игре</div>
-        </div>
-      </div>
-      <div class="server-card" onclick="connectServer()">
-        <div class="server-bg bg-sand"></div>
-        <div class="server-content">
-          <div class="server-title">SANDSTONE</div>
-          <div class="server-status">9 в игре</div>
-        </div>
-      </div>
-      <div class="server-card" onclick="connectServer()">
-        <div class="server-bg bg-duels"></div>
-        <div class="server-content">
-          <div class="server-title">DUELS</div>
-          <div class="server-status empty">0 в игре</div>
-        </div>
-      </div>
-      <div class="server-card" onclick="connectServer()">
-        <div class="server-bg bg-csgo"></div>
-        <div class="server-content">
-          <div class="server-title">CS:GO</div>
-          <div class="server-status">1 в игре</div>
-        </div>
-      </div>
-      <div class="server-card" onclick="connectServer()">
-        <div class="server-bg bg-awp"></div>
-        <div class="server-content">
-          <div class="server-title">AWP</div>
-          <div class="server-status empty">0 в игре</div>
+        <div class="case-grid">
+          ${Object.entries(CASES).filter(([id]) => id !== 'free').map(([id, c]) => `
+            <div class="case-card card-base">
+              <div class="case-visual">${c.emoji}</div>
+              <h3>${esc(c.name)}</h3>
+              <div class="case-count">${c.items.length} предмета</div>
+              <div class="case-price">${fmtPrice(c.price)}</div>
+              <button class="btn btn-primary" data-case="${id}">Открыть</button>
+            </div>`).join('')}
         </div>
       </div>
     </div>
+  </section>
+`;
 
-    <!-- Описание -->
-    <div class="bottom-desc">
-      <h2>Сервера Counter-Strike 2 (KC2) — BAZA-CS2</h2>
-      <p>BAZA-CS2 - проект серверов Counter-Strike 2 с мониторингом онлайна, скинченджером, статистикой игроков и кланами. Выберите подходящий сервер из списка выше, зайдите в игру — и поставьте любой понравившийся скин в нашем скинченджере!</p>
-    </div>
-  `;
-
-  // МАГАЗИН + КЕЙСЫ
-  pages['/shop'] = () => {
-    const paidCases = ['bronze', 'silver', 'gold', 'legendary'];
-    return `
-      <section class="inner-page">
-        <div class="container">
-          <div class="page-head">
-            <div class="tagline">МАГАЗИН И КЕЙСЫ</div>
-            <h1>Магазин сервера</h1>
-            <p>Привилегии, разбан и кейсы со скинами. Выдача автоматическая.</p>
-          </div>
-
-          <div class="shop-tabs-wrap">
-            <div class="shop-tabs">
-              <button class="shop-tab active" data-tab="shop" onclick="switchShopTab('shop')">🛒 Магазин</button>
-              <button class="shop-tab" data-tab="cases" onclick="switchShopTab('cases')">🎁 Кейсы <span class="tab-badge">FREE</span></button>
-            </div>
-          </div>
-
-          <div id="tab-shop">
-            <div class="shop-grid">
-              <div class="shop-card vip">
-                <div class="shop-icon">👑</div>
-                <h3>VIP</h3>
-                <p>Базовый набор привилегий</p>
-                <div class="shop-price"><span class="amount">199</span><span class="cur">₽ / мес</span></div>
-                <ul>
-                  <li>Префикс [VIP] в чате</li>
-                  <li>Цветной ник</li>
-                  <li>Доступ к VIP-скинам</li>
-                  <li>+50 HP при респавне</li>
-                </ul>
-                <button class="btn btn-outline" onclick="openModal('VIP', 199)">Купить</button>
-              </div>
-              <div class="shop-card premium">
-                <div class="shop-icon">💎</div>
-                <h3>PREMIUM</h3>
-                <p>Максимум возможностей</p>
-                <div class="shop-price"><span class="amount">499</span><span class="cur">₽ / мес</span></div>
-                <ul>
-                  <li>Всё из VIP</li>
-                  <li>Анимированный префикс</li>
-                  <li>Смена ника 1 раз в день</li>
-                  <li>+100 HP и брони</li>
-                </ul>
-                <button class="btn btn-primary" onclick="openModal('PREMIUM', 499)">Купить</button>
-              </div>
-              <div class="shop-card admin">
-                <div class="shop-icon">🛡️</div>
-                <h3>ADMIN</h3>
-                <p>Стань админом сервера</p>
-                <div class="shop-price"><span class="amount">999</span><span class="cur">₽ / мес</span></div>
-                <ul>
-                  <li>Всё из PREMIUM</li>
-                  <li>Модерация (/ban, /kick)</li>
-                  <li>Тег [ADMIN] в чате</li>
-                  <li>Смена карты (/map)</li>
-                </ul>
-                <button class="btn btn-outline" onclick="openModal('ADMIN', 999)">Купить</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="tab-cases" style="display:none;">
-            <div class="cases-hero">
-              <div class="cases-hero-info">
-                <h2>Бесплатный кейс</h2>
-                <p style="color:var(--muted); margin-bottom: 10px;">Раз в 2 часа — крути рулетку и получай приз.</p>
-                <div class="free-timer" id="freeTimer"></div>
-                <button class="btn btn-primary" id="freeCaseBtn" onclick="openCase('free')" style="padding:14px 28px;">🎁 Открыть</button>
-              </div>
-              <div class="big-case">🎁</div>
-            </div>
-            <div class="case-grid">
-              ${paidCases.map(id => {
-                const c = CASES[id];
-                return `
-                  <div class="case-card">
-                    <div class="case-visual">${c.emoji}</div>
-                    <h3>${c.name}</h3>
-                    <div class="case-price">${c.price} ₽</div>
-                    <button class="btn btn-primary" onclick="openCase('${id}')">Открыть</button>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
-  };
-
-  // ПРАВИЛА
-  pages['/rules'] = () => `
-    <section class="inner-page">
-      <div class="container">
-        <div class="page-head">
-          <div class="tagline">ПОРЯДОК</div>
-          <h1>Правила сервера</h1>
-          <p>За нарушения — бан без предупреждения.</p>
-        </div>
-        <div class="rules-list">
-          ${[
-            {t:'1', d:' Подключаясь к игровым серверам проекта BAZA-CS2 или посещая официальный сайт проекта, вы автоматически соглашаетесь с данными правилами и обязуетесь их соблюдать.'},
-            {t:'2', d:'Правила проекта обязательны для всех игроков вне зависимости от возраста, пола, национальности, уровня привилегий или вероисповедания.'},
-            {t:'3', d:'Игроком считается любое лицо, подключившееся к игровому серверу. Администрация на ровне с игроками с привелегиями несет отвественность за нарушения правил'},
-            {t:'4', d:'Руководство проекта BAZA-CS2 оставляет за собой право заблокировать аккаунт участника или доступ к Discord-серверу проекта в целях поддержания порядка и стабильности. Это возможно даже при отсутствии прямого нарушения явно сформулированных правил, если поведение участника угрожает комьюнити.'},
-            {t:'5', d:' Правила, указанные в данном документе, действуют на всех игровых серверах проекта BAZA-CS2 — без исключений.'}
-            {t:'6', d:'Администрация вправе применять наказания без предварительного предупреждения, если нарушение очевидно или носит грубый характер.'}
-            {t:'7', d:'Высшая администрация оставляет за собой право в исключительном порядке заблокировать игрока без объяснения причин.'}
-          ].map((r,i)=>`
-            <div class="rule-item">
-              <div class="rule-num">${i+1}</div>
-              <div class="rule-content"><h4>${r.t}</h4><p>${r.d}</p></div>
-            </div>
-          `).join('')}
-        </div>
+pages['/rules'] = () => `
+  <section class="inner-page">
+    <div class="container">
+      <div class="page-head">
+        <div class="tagline">ПОРЯДОК</div>
+        <h1>Правила проекта</h1>
+        <p>Незнание правил не освобождает от ответственности.</p>
       </div>
-    </section>
-  `;
-
-  // АДМИНЫ
-  pages['/admins'] = () => {
-    const admins = [
-      {n:'Vitalik_CS', r:'Главный администратор', b:'OWNER', i:'V'},
-      {n:'Andrey', r:'Старший админ', b:'SR.ADMIN', i:'A'},
-      {n:'MaxPower', r:'Модератор', b:'ADMIN', i:'M'},
-      {n:'Kseniya', r:'Модератор', b:'ADMIN', i:'K'},
-    ];
-    return `
-      <section class="inner-page">
-        <div class="container">
-          <div class="page-head">
-            <div class="tagline">КОМАНДА</div>
-            <h1>Администрация</h1>
-          </div>
-          <div class="admins-grid">
-            ${admins.map(a=>`
-              <div class="admin-card">
-                <div class="admin-avatar">${a.i}</div>
-                <div class="admin-info">
-                  <h4>${a.n}</h4><p>${a.r}</p>
-                  <span class="admin-badge">${a.b}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </section>
-    `;
-  };
-
-  // FAQ
-  pages['/faq'] = () => {
-    const faqs = [
-      {q:'Как зайти на сервер?', a:`Введи в консоли: connect ${SERVER_IP}`},
-      {q:'Как работают кейсы?', a:'Бесплатный раз в 2 часа. Платные без ограничений.'},
-      {q:'Как оплатить?', a:'СБП, карты, ЮMoney, криптовалюта.'},
-    ];
-    return `
-      <section class="inner-page">
-        <div class="container">
-          <div class="page-head">
-            <div class="tagline">ПОМОЩЬ</div>
-            <h1>Частые вопросы</h1>
-          </div>
-          <div class="faq">
-            ${faqs.map(f=>`
-              <div class="faq-item">
-                <div class="faq-q">${f.q}<span class="arrow">+</span></div>
-                <div class="faq-a">${f.a}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </section>
-    `;
-  };
-
-  // БАНЫ
-  pages['/bans'] = () => {
-    const bans = [
-      {n:'NikitkaPro', r:'Wallhack', a:'Andrey', d:'2025-11-20', p:'permanent', pn:'Навсегда'},
-      {n:'ToxicBoy', r:'Оскорбления', a:'Kseniya', d:'2025-11-18', p:'temp', pn:'7 дней'},
-    ];
-    return `
-      <section class="inner-page">
-        <div class="container">
-          <div class="page-head">
-            <div class="tagline">МОДЕРАЦИЯ</div>
-            <h1>Список банов</h1>
-          </div>
-          <div class="bans-wrap">
-            <table class="bans-table">
-              <thead><tr><th>Игрок</th><th>Причина</th><th>Админ</th><th>Дата</th><th>Срок</th></tr></thead>
-              <tbody>
-                ${bans.map(b=>`
-                  <tr>
-                    <td style="font-weight:700;">${b.n}</td>
-                    <td style="color:var(--muted);">${b.r}</td>
-                    <td>${b.a}</td>
-                    <td style="color:var(--muted);">${b.d}</td>
-                    <td><span class="ban-perm ${b.p}">${b.pn}</span></td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    `;
-  };
-
-  pages['/404'] = () => `
-    <div class="page-head" style="padding-top:100px;">
-      <h1 style="font-size:120px;color:var(--accent-light);">404</h1>
-      <p>Страница не найдена</p>
-      <div style="margin-top:30px;">
-        <a href="#/" class="btn btn-primary" style="padding:14px 28px;">← На главную</a>
+      <div class="rules-list">
+        ${RULES.map((text, i) => `
+          <div class="rule-item card-base">
+            <div class="rule-num">${i + 1}</div>
+            <p>${esc(text)}</p>
+          </div>`).join('')}
       </div>
     </div>
-  `;
+  </section>
+`;
 
-  /* ============ ЛОГИКА ============ */
-  const pageRoot = document.getElementById('page-root');
-  let currentPath = null;
-  let isTransitioning = false;
+pages['/admins'] = () => `
+  <section class="inner-page">
+    <div class="container">
+      <div class="page-head">
+        <div class="tagline">КОМАНДА</div>
+        <h1>Администрация</h1>
+        <p>По вопросам наказаний и жалоб пишите в Telegram или Discord.</p>
+      </div>
+      <div class="admins-grid">
+        ${ADMINS.map(a => `
+          <div class="admin-card card-base">
+            <div class="admin-avatar">${esc(a.n[0].toUpperCase())}</div>
+            <div class="admin-info">
+              <h4>${esc(a.n)}</h4><p>${esc(a.r)}</p>
+              <span class="admin-badge ${a.b === 'OWNER' ? 'owner' : ''}">${esc(a.b)}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+`;
 
-  function getPath() { return location.hash.replace(/^#/, '') || '/'; }
+const FAQS = [
+  { q: 'Как зайти на сервер?', a: `Нажмите «Играть» на карточке сервера на главной — CS2 подключится сам. Или откройте консоль (~) и введите <code>connect IP</code>. Адреса серверов:<br>${SERVERS.map(s => `${esc(s.name)} — <code>${s.ip}</code>`).join('<br>')}` },
+  { q: 'Как работают кейсы?', a: 'Бесплатный кейс можно открывать раз в 2 часа. Платные кейсы открываются без ограничений.' },
+  { q: 'Как оплатить привилегию?', a: 'СБП, банковские карты, ЮMoney. Привилегия выдаётся автоматически после оплаты.' },
+  { q: 'Меня забанили, что делать?', a: `Найдите себя в разделе «Баны» и напишите в поддержку: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support.replace('https://t.me/', '@')}</a>. Укажите ник и Steam ID.` },
+  { q: 'Как пожаловаться на игрока?', a: 'Напишите в Telegram или Discord: ник нарушителя, сервер, время и по возможности демо или видео.' },
+];
 
-  function renderPage(path, animate = true) {
-    if (!pages[path]) path = '/404';
-    if (currentPath === path && !isTransitioning) return;
+pages['/faq'] = () => `
+  <section class="inner-page">
+    <div class="container">
+      <div class="page-head">
+        <div class="tagline">ПОМОЩЬ</div>
+        <h1>Частые вопросы</h1>
+      </div>
+      <div class="faq">
+        ${FAQS.map(f => `
+          <div class="faq-item card-base">
+            <button class="faq-q">${esc(f.q)}<span class="arrow">+</span></button>
+            <div class="faq-a">${f.a}</div>
+          </div>`).join('')}
+      </div>
+      <div class="faq-footer">
+        Не нашли ответ?<br>
+        <a class="btn btn-primary" href="${CONFIG.support}" target="_blank" rel="noopener">✈️ Написать в поддержку</a>
+      </div>
+    </div>
+  </section>
+`;
 
-    const doRender = () => {
-      if (path === '/') {
-        pageRoot.className = 'main-container';
-      } else {
-        pageRoot.className = '';
-      }
-      
-      pageRoot.innerHTML = pages[path]();
-      pageRoot.classList.remove('leaving');
+function bansRowsHtml(list) {
+  if (!list.length) return '<tr><td colspan="5" class="bans-empty">Ничего не найдено</td></tr>';
+  return list.map(b => `
+    <tr>
+      <td style="font-weight:700;">${esc(b.n)}</td>
+      <td style="color:var(--muted);">${esc(b.r)}</td>
+      <td>${esc(b.a)}</td>
+      <td style="color:var(--muted);">${esc(b.d)}</td>
+      <td><span class="ban-perm ${b.p}">${esc(b.pn)}</span></td>
+    </tr>`).join('');
+}
+
+pages['/bans'] = () => `
+  <section class="inner-page">
+    <div class="container">
+      <div class="page-head">
+        <div class="tagline">МОДЕРАЦИЯ</div>
+        <h1>Список банов</h1>
+      </div>
+      <div class="bans-tools"><input type="search" id="banSearch" placeholder="Поиск по нику..."></div>
+      <div class="bans-wrap card-base">
+        <table class="bans-table">
+          <thead><tr><th>Игрок</th><th>Причина</th><th>Админ</th><th>Дата</th><th>Срок</th></tr></thead>
+          <tbody id="bansBody">${bansRowsHtml(BANS)}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+`;
+
+pages['/404'] = () => `
+  <div class="page-head" style="padding-top:100px;">
+    <h1 style="font-size:120px;color:var(--accent-light);">404</h1>
+    <p>Страница не найдена</p>
+    <div style="margin-top:30px;"><a href="#/" class="btn btn-primary" style="padding:14px 28px;">← На главную</a></div>
+  </div>
+`;
+
+/* =====================================================================
+   РОУТЕР
+   ===================================================================== */
+const pageRoot = $('page-root');
+let currentPath = null;
+
+function parseHash() {
+  const raw = location.hash.replace(/^#/, '') || '/';
+  const [path, query = ''] = raw.split('?');
+  return { path, query };
+}
+
+function renderPage(animate = true) {
+  let { path, query } = parseHash();
+  if (!pages[path]) path = '/404';
+
+  const doRender = () => {
+    pageRoot.className = path === '/' ? 'main-container' : '';
+    pageRoot.innerHTML = pages[path]();
+    if (animate) {
       void pageRoot.offsetWidth;
-      
-      if (animate) {
-        pageRoot.classList.add('entering');
-        setTimeout(() => pageRoot.classList.remove('entering'), 750);
-      }
-      
-      window.scrollTo({ top: 0, behavior: 'instant' });
-
-      document.querySelectorAll('.faq-item').forEach(item => {
-        item.querySelector('.faq-q').addEventListener('click', () => {
-          document.querySelectorAll('.faq-item').forEach(i => {
-            if (i !== item) i.classList.remove('open');
-          });
-          item.classList.toggle('open');
-        });
-      });
-
-      document.querySelectorAll('.nav-links a').forEach(a => {
-        a.classList.toggle('active', a.dataset.route === path);
-      });
-
-      if (path === '/shop') startFreeTimer();
-      else stopFreeTimer();
-
-      isTransitioning = false;
-    };
-
-    if (!currentPath || !animate) {
-      doRender();
-      currentPath = path;
-      return;
+      pageRoot.classList.add('entering');
+      setTimeout(() => pageRoot.classList.remove('entering'), 750);
     }
+    window.scrollTo({ top: 0, behavior: 'instant' });
 
-    isTransitioning = true;
-    pageRoot.classList.add('leaving');
-    setTimeout(() => {
-      doRender();
-      currentPath = path;
-    }, 340);
-  }
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.route === path));
+    document.title = path === '/' ? 'BAZA — сервера Counter-Strike 2' : `BAZA — ${pageRoot.querySelector('h1')?.textContent || ''}`;
 
-  window.addEventListener('hashchange', () => renderPage(getPath()));
-  window.addEventListener('DOMContentLoaded', () => setTimeout(() => renderPage(getPath(), false), 100));
-  if (document.readyState !== 'loading') {
-    setTimeout(() => { if (!currentPath) renderPage(getPath(), false); }, 100);
-  }
-
-  /* ============ ВСПОМОГАТЕЛЬНЫЕ ============ */
-  function connectServer() {
-    showToast('Подключение к серверу...');
-    setTimeout(() => window.location.href = `steam://connect/${SERVER_IP}`, 500);
-  }
-
-  let toastTimer;
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  const overlay = document.getElementById('modalOverlay');
-  let currentPlan = { name: 'VIP', price: 199 };
-  
-  function openModal(name, price) {
-    currentPlan = { name, price };
-    document.getElementById('modalPlan').textContent = `${name} — ${price} ₽`;
-    overlay.classList.add('active');
-  }
-  function closeModal() { overlay.classList.remove('active'); }
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-  
-  function submitOrder() {
-    const steam = document.getElementById('orderSteam').value.trim();
-    if (!steam) { document.getElementById('orderSteam').focus(); return; }
-    closeModal();
-    showToast(`Заказ на ${currentPlan.name} оформлен!`);
-    document.getElementById('orderSteam').value = '';
-    document.getElementById('orderContact').value = '';
-  }
-
-  window.switchShopTab = function(tab) {
-    const tabs = document.querySelectorAll('.shop-tab');
-    const shopDiv = document.getElementById('tab-shop');
-    const casesDiv = document.getElementById('tab-cases');
-    if (!shopDiv || !casesDiv) return;
-    
-    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    
-    if (tab === 'cases') {
-      shopDiv.style.display = 'none';
-      casesDiv.style.display = 'block';
-      casesDiv.classList.add('tab-panel');
-      startFreeTimer();
-    } else {
-      shopDiv.style.display = 'block';
-      casesDiv.style.display = 'none';
-      shopDiv.classList.add('tab-panel');
-      stopFreeTimer();
-    }
+    stopSlider(); stopFreeTimer();
+    if (path === '/') startSlider();
+    if (path === '/shop' && query === 'cases') switchShopTab('cases');
+    currentPath = path;
   };
 
-  /* ============ КЕЙСЫ И РУЛЕТКА ============ */
-  const CASES = {
-    free: { id: 'free', name: 'Бесплатный', emoji: '🎁', price: 0, items: [
-      { name: 'AK-47 | Redline', emoji: '🔫', rarity: 'classified' },
-      { name: 'M4A4 | Howl', emoji: '🔫', rarity: 'covert' },
-      { name: 'AWP | Asiimov', emoji: '🎯', rarity: 'covert' },
-      { name: 'VIP на 3 дня', emoji: '👑', rarity: 'rare' },
-      { name: 'Скидка 20%', emoji: '🏷️', rarity: 'milspec' },
-      { name: 'P250 | Sand Dune', emoji: '🔫', rarity: 'consumer' },
-    ]},
-    bronze: { id: 'bronze', name: 'Bronze Case', emoji: '📦', price: 99, items: [
-      { name: 'AWP | Dragon Lore', emoji: '🎯', rarity: 'rare' },
-      { name: 'AK-47 | Fire Serpent', emoji: '🔫', rarity: 'covert' },
-      { name: 'USP-S | Cortex', emoji: '🔫', rarity: 'classified' },
-      { name: 'MP7 | Skulls', emoji: '🔫', rarity: 'industrial' },
-    ]},
-    silver: { id: 'silver', name: 'Silver Case', emoji: '🥈', price: 299, items: [
-      { name: 'AWP | Dragon Lore', emoji: '🎯', rarity: 'rare' },
-      { name: 'Karambit | Doppler', emoji: '🔪', rarity: 'rare' },
-      { name: 'AK-47 | Bloodsport', emoji: '🔫', rarity: 'covert' },
-      { name: 'Deagle | Printstream', emoji: '🔫', rarity: 'classified' },
-    ]},
-    gold: { id: 'gold', name: 'Gold Case', emoji: '🥇', price: 799, items: [
-      { name: 'AWP | Dragon Lore', emoji: '🎯', rarity: 'rare' },
-      { name: 'M9 Bayonet | Fade', emoji: '🔪', rarity: 'rare' },
-      { name: 'ADMIN на 7 дней', emoji: '🛡️', rarity: 'rare' },
-      { name: 'AK-47 | Vulcan', emoji: '🔫', rarity: 'classified' },
-    ]},
-    legendary: { id: 'legendary', name: 'Legendary Case', emoji: '💎', price: 1999, items: [
-      { name: 'AWP | Dragon Lore', emoji: '🎯', rarity: 'rare' },
-      { name: 'Karambit | Doppler', emoji: '🔪', rarity: 'rare' },
-      { name: 'ADMIN на 30 дней', emoji: '🛡️', rarity: 'rare' },
-      { name: 'M4A4 | Howl', emoji: '🔫', rarity: 'covert' },
-    ]}
-  };
+  if (!currentPath || !animate) return doRender();
+  pageRoot.classList.add('leaving');
+  setTimeout(() => { pageRoot.classList.remove('leaving'); doRender(); }, 340);
+}
 
-  function getLastFreeOpen() { try { return +localStorage.getItem(FREE_CASE_KEY) || 0; } catch(e) { return 0; } }
-  function setLastFreeOpen(ts) { try { localStorage.setItem(FREE_CASE_KEY, String(ts)); } catch(e) {} }
-  function canOpenFree() { return Date.now() - getLastFreeOpen() >= FREE_CASE_COOLDOWN; }
+window.addEventListener('hashchange', () => renderPage(true));
 
-  let freeTimerInterval = null;
-  function startFreeTimer() {
-    if (freeTimerInterval) clearInterval(freeTimerInterval);
-    const el = document.getElementById('freeTimer');
-    const btn = document.getElementById('freeCaseBtn');
-    if (!el) return;
+/* =====================================================================
+   ОБРАБОТЧИКИ (делегирование)
+   ===================================================================== */
+document.addEventListener('click', (e) => {
+  const t = e.target;
 
-    const update = () => {
-      if (canOpenFree()) {
-        el.innerHTML = '<div style="color:var(--green);font-weight:700;font-size:15px;">Готов к открытию!</div>';
-        if (btn) { btn.disabled = false; btn.textContent = '🎁 Открыть'; }
-        if (freeTimerInterval) { clearInterval(freeTimerInterval); freeTimerInterval = null; }
-        return;
-      }
-      const remaining = FREE_CASE_COOLDOWN - (Date.now() - getLastFreeOpen());
-      const h = Math.floor(remaining / 3600000);
-      const m = Math.floor((remaining % 3600000) / 60000);
-      const s = Math.floor((remaining % 60000) / 1000);
-      el.innerHTML = `
-        <div class="timer-cell"><div class="num">${String(h).padStart(2,'0')}</div><div class="lbl">час</div></div>
-        <div class="timer-cell"><div class="num">${String(m).padStart(2,'0')}</div><div class="lbl">мин</div></div>
-        <div class="timer-cell"><div class="num">${String(s).padStart(2,'0')}</div><div class="lbl">сек</div></div>
-      `;
-      if (btn) { btn.disabled = true; btn.textContent = '⏳ Скоро'; }
-    };
-    update();
-    freeTimerInterval = setInterval(update, 1000);
-  }
-  function stopFreeTimer() {
-    if (freeTimerInterval) { clearInterval(freeTimerInterval); freeTimerInterval = null; }
+  const copyBtn = t.closest('[data-copy]');
+  if (copyBtn) return copyText(copyBtn.dataset.copy);
+
+  const period = t.closest('#donatorsToggle button');
+  if (period) {
+    document.querySelectorAll('#donatorsToggle button').forEach(b => b.classList.toggle('active', b === period));
+    $('donatorsList').innerHTML = donatorsHtml(period.dataset.period);
+    return;
   }
 
-  function pickWeighted(items) { return items[Math.floor(Math.random() * items.length)]; }
+  const arrow = t.closest('.slider-arrows button');
+  if (arrow) { setSlide(slideIndex + Number(arrow.dataset.dir)); restartSliderTimer(); return; }
+  const dot = t.closest('#sliderDots button');
+  if (dot) { setSlide(Number(dot.dataset.slide)); restartSliderTimer(); return; }
 
-  let currentCaseId = null;
-  let caseAnimTimer = null;
-  const caseModal = document.getElementById('caseModal');
-
-  window.openCase = function(caseId) {
-    const c = CASES[caseId];
-    if (!c) return;
-    if (caseId === 'free' && !canOpenFree()) { showToast('Бесплатный кейс ещё не готов!'); return; }
-    
-    currentCaseId = caseId;
-    const track = document.getElementById('rouletteTrack');
-    const result = document.getElementById('rouletteResult');
-    const closeBtn = document.getElementById('closeCaseBtn');
-    const againBtn = document.getElementById('openAgainBtn');
-    document.getElementById('rouletteCaseName').textContent = c.name;
-
-    result.classList.remove('show');
-    closeBtn.style.display = 'none';
-    againBtn.style.display = 'none';
-    track.classList.remove('animate');
-    track.style.transform = 'translateX(0)';
-
-    const win = pickWeighted(c.items);
-    const TOTAL = 60, WIN_INDEX = 55;
-    const items = [];
-    for (let i = 0; i < TOTAL; i++) {
-      if (i === WIN_INDEX) items.push(win);
-      else items.push(c.items[Math.floor(Math.random() * c.items.length)]);
-    }
-    
-    track.innerHTML = items.map(item => `
-      <div class="roulette-item rar-${item.rarity}">
-        <div class="item-emoji">${item.emoji}</div>
-        <div class="item-name">${item.name}</div>
-      </div>
-    `).join('');
-
-    caseModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const first = track.querySelector('.roulette-item');
-        if (!first) return;
-        const itemW = first.offsetWidth;
-        const step = itemW + 8;
-        const center = window.innerWidth / 2;
-        const winCenter = WIN_INDEX * step + itemW / 2 + 4;
-        const offset = center - winCenter;
-        
-        track.style.transform = `translateX(${offset}px)`;
-        track.classList.add('animate');
-
-        caseAnimTimer = setTimeout(() => {
-          document.getElementById('resEmoji').textContent = win.emoji;
-          document.getElementById('resName').textContent = win.name;
-          result.classList.add('show');
-          closeBtn.style.display = 'inline-flex';
-          againBtn.style.display = 'inline-flex';
-
-          if (caseId === 'free') {
-            setLastFreeOpen(Date.now());
-            startFreeTimer();
-          }
-          spawnConfetti();
-        }, 5200);
-      });
-    });
-  };
-
-  window.openAgain = function() {
-    if (!currentCaseId) return;
-    closeCaseModal(true);
-    setTimeout(() => openCase(currentCaseId), 350);
-  };
-
-  window.closeCaseModal = function(keepId) {
-    caseModal.classList.remove('active');
-    document.body.style.overflow = '';
-    clearTimeout(caseAnimTimer);
-    if (!keepId) currentCaseId = null;
-  };
-
-  function spawnConfetti() {
-    const colors = ['#a855f7', '#c084fc', '#d946ef', '#8b5cf6', '#22d3ee'];
-    for (let i = 0; i < 40; i++) {
-      const el = document.createElement('div');
-      el.style.position = 'fixed';
-      el.style.top = '-20px';
-      el.style.width = '9px';
-      el.style.height = '13px';
-      el.style.left = Math.random() * 100 + 'vw';
-      el.style.background = colors[Math.floor(Math.random() * colors.length)];
-      el.style.animation = `confettiFall ${2 + Math.random() * 1.5}s linear forwards`;
-      el.style.zIndex = '600';
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 4000);
-    }
+  const faq = t.closest('.faq-q');
+  if (faq) {
+    const item = faq.parentElement;
+    document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
+    item.classList.toggle('open');
+    return;
   }
-</script>
 
-</body>
-</html>
+  const tab = t.closest('.shop-tab');
+  if (tab) return switchShopTab(tab.dataset.tab);
+
+  const buy = t.closest('[data-buy]');
+  if (buy) return openModal(buy.dataset.buy);
+
+  const caseBtn = t.closest('[data-case]');
+  if (caseBtn) return openCase(caseBtn.dataset.case);
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'banSearch') {
+    const q = e.target.value.trim().toLowerCase();
+    $('bansBody').innerHTML = bansRowsHtml(BANS.filter(b => b.n.toLowerCase().includes(q)));
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (caseModal.classList.cont
