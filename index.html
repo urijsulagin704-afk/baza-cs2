@@ -4,171 +4,201 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BAZA — CS2 сервера</title>
+<!-- Подключаем крутые шрифты -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
-  /* ================= ТВОИ СТИЛИ ================= */
+  /* ================= БАЗА ================= */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
     --bg: #070312; --bg-2: #0f0721; --card: #150b2a; --card-2: #1c1038;
     --border: #2a1852; --border-hi: #3d2470;
     --accent: #a855f7; --accent-light: #c084fc; --accent-dark: #7c3aed;
+    --cyan: #22d3ee;
     --text: #ffffff; --muted: #9a8fb0;
-    --green: #10b981; --red: #ef4444; --blue: #3b82f6; --yellow: #f59e0b;
+    --green: #10b981; --red: #ef4444;
   }
   
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     background: var(--bg); color: var(--text);
     line-height: 1.5; overflow-x: hidden;
     min-height: 100vh; position: relative;
   }
+  h1, h2, h3, .logo, .server-title { font-family: 'Russo One', sans-serif; font-weight: 400; letter-spacing: 1px; }
 
   body::before {
     content: ''; position: fixed; inset: 0;
     background: radial-gradient(circle at 10% 20%, rgba(168,85,247,0.15), transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(139,92,246,0.15), transparent 40%);
+                radial-gradient(circle at 90% 80%, rgba(34,211,238,0.1), transparent 40%);
     z-index: -1; pointer-events: none;
   }
 
+  /* ================= НАВИГАЦИЯ ================= */
   nav {
     background: rgba(21, 11, 42, 0.8); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
   }
   .nav-inner {
-    max-width: 1400px; margin: 0 auto; padding: 12px 24px;
+    max-width: 1200px; margin: 0 auto; padding: 16px 24px;
     display: flex; align-items: center; justify-content: space-between; gap: 20px;
   }
   .logo {
-    font-size: 28px; font-weight: 900; letter-spacing: 1px;
-    background: linear-gradient(90deg, #fff, var(--accent-light));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-decoration: none; cursor: pointer;
+    font-size: 28px; color: #fff; text-decoration: none;
+    text-shadow: 0 0 15px var(--accent);
   }
-  .nav-links { display: flex; gap: 8px; list-style: none; align-items: center; }
+  .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
   .nav-links a {
-    color: #d1c8e3; text-decoration: none; font-size: 14px; font-weight: 600;
-    padding: 6px 12px; border-radius: 6px; transition: 0.2s;
+    color: #d1c8e3; text-decoration: none; font-size: 15px; font-weight: 600;
+    transition: 0.2s; position: relative;
   }
-  .nav-links a:hover { color: var(--accent-light); background: rgba(255,255,255,0.05); }
+  .nav-links a:hover, .nav-links a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(34,211,238,0.5); }
   
   .online-badge {
     background: rgba(16, 185, 129, 0.15); color: var(--green);
-    padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; gap: 6px; border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px; border: 1px solid rgba(16, 185, 129, 0.3);
   }
   .online-badge::before {
-    content: ''; width: 6px; height: 6px; background: var(--green);
-    border-radius: 50%; animation: pulse 1.5s infinite;
+    content: ''; width: 8px; height: 8px; background: var(--green);
+    border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 8px var(--green);
   }
-  @keyframes pulse { 50% { opacity: 0.3; } }
+  @keyframes pulse { 50% { opacity: 0.4; } }
 
   .btn {
-    padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 700;
+    padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 700;
     cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center;
-    text-decoration: none; transition: 0.25s; font-family: inherit;
+    text-decoration: none; transition: 0.3s; font-family: inherit;
   }
   .btn-primary {
     background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); color: #fff;
-    box-shadow: 0 4px 15px rgba(124,58,237,0.4);
+    box-shadow: 0 4px 15px rgba(124,58,237,0.4); border: 1px solid #c084fc;
   }
-  .btn-hero {
-    background: linear-gradient(180deg, #e9d5ff 0%, #a78bfa 100%);
-    color: #1e0f37; padding: 12px 24px; border-radius: 8px; font-weight: 800;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: 0 4px 15px rgba(167,139,250,0.4);
-  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.6); }
 
-  .main-container { max-width: 1400px; margin: 24px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 24px; }
-  .top-banners { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .banner-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
-  }
-  .banner-card h3 { font-size: 16px; margin-bottom: 4px; }
-  .banner-card p { color: var(--muted); font-size: 13px; }
-  .banner-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-  .tg-icon { background: linear-gradient(180deg, #2AABEE, #229ED9); }
-  .dc-icon { background: linear-gradient(180deg, #5865F2, #4752C4); }
+  /* ================= ГЛАВНЫЙ КОНТЕЙНЕР ================= */
+  .main-container { max-width: 1200px; margin: 32px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 32px; }
 
-  .middle-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
-  .donators-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
-  .donators-header { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
-  .donator-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .donator-item:last-child { border-bottom: none; }
-  .donator-avatar { width: 40px; height: 40px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .donator-name { font-size: 14px; font-weight: 700; }
-  .donator-name.gold { color: #fbbf24; }
-  .donator-name.purple { color: #d8b4fe; }
-  .donator-desc { font-size: 11px; color: var(--muted); }
-  .donator-rank { font-size: 24px; font-weight: 900; color: var(--border-hi); font-style: italic; }
-
+  /* ГЛАВНЫЙ БАННЕР */
   .hero-slider {
-    background: linear-gradient(135deg, #1e0f37, #0f0721); border: 1px solid var(--border);
-    border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column;
-    justify-content: flex-end; padding: 40px; min-height: 300px;
+    background: linear-gradient(135deg, #1e0f37 0%, #0a0514 100%); 
+    border: 1px solid var(--border); border-radius: 20px;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    padding: 60px 20px; min-height: 350px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5);
   }
   .hero-bg {
     position: absolute; inset: 0; z-index: 1;
-    background: radial-gradient(circle at 70% 30%, rgba(168,85,247,0.4), transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(88,101,242,0.2), transparent 50%),
-                linear-gradient(to top, rgba(15,7,33,1) 0%, rgba(15,7,33,0.2) 60%, transparent 100%);
+    background: radial-gradient(circle at 50% 50%, rgba(168,85,247,0.2), transparent 60%);
   }
   .hero-content { position: relative; z-index: 2; }
-  .hero-content h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
-  .hero-content p { color: #d1c8e3; margin-bottom: 24px; font-size: 15px; }
+  .hero-content h1 { font-size: 42px; margin-bottom: 16px; color: #fff; text-shadow: 0 0 20px rgba(168,85,247,0.5); }
+  .hero-content p { color: #d1c8e3; margin-bottom: 30px; font-size: 18px; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .btn-hero {
+    background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%);
+    color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 800; font-family: 'Russo One', sans-serif;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+    box-shadow: 0 4px 20px rgba(34,211,238,0.4); transition: 0.3s;
+  }
+  .btn-hero:hover { transform: scale(1.05); box-shadow: 0 6px 25px rgba(34,211,238,0.6); }
 
-  .servers-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  /* СЕРВЕРА */
+  .section-title { font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; display: block; width: 4px; height: 24px; background: var(--accent); border-radius: 2px; }
+
+  .servers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
   .server-card {
     background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-    overflow: hidden; position: relative; aspect-ratio: 3/4; cursor: pointer; transition: 0.2s;
+    overflow: hidden; position: relative; aspect-ratio: 4/3; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .server-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-  .server-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 100px; opacity: 0.8; }
+  .server-card:hover { transform: translateY(-5px); border-color: var(--cyan); box-shadow: 0 8px 25px rgba(34,211,238,0.2); }
+  .server-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 80px; opacity: 0.3; transition: 0.3s; }
+  .server-card:hover .server-bg { opacity: 0.6; transform: scale(1.1); }
+  
   .bg-public { background: linear-gradient(180deg, #1c1038 0%, #0a0416 100%); } .bg-public::after { content: '🕵️'; }
   .bg-fun { background: linear-gradient(180deg, #2a1b4d 0%, #0a0416 100%); } .bg-fun::after { content: '🤪'; }
   .bg-sand { background: linear-gradient(180deg, #3d2470 0%, #0a0416 100%); } .bg-sand::after { content: '🏜️'; }
   .bg-duels { background: linear-gradient(180deg, #1e0f37 0%, #0a0416 100%); } .bg-duels::after { content: '⚔️'; }
 
-  .server-content { position: absolute; inset: 0; z-index: 2; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(to top, rgba(10,4,22,0.95) 0%, transparent 50%); }
-  .server-title { font-size: 16px; font-weight: 800; text-transform: uppercase; }
-  .server-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); font-weight: 600; }
+  .server-content { position: absolute; inset: 0; z-index: 2; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(to top, rgba(10,4,22,0.95) 0%, transparent 60%); }
+  .server-title { font-size: 18px; text-transform: uppercase; }
+  .server-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--green); font-weight: 700; background: rgba(16,185,129,0.1); padding: 4px 8px; border-radius: 6px; width: fit-content; }
   .server-status::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
 
-  /* ================= АДАПТАЦИЯ ПОД ТЕЛЕФОНЫ ================= */
+  /* ================= МАГАЗИН ================= */
+  .shop-section { margin-top: 20px; padding: 40px 0; }
+  .shop-head { text-align: center; margin-bottom: 40px; }
+  .shop-head h2 { font-size: 36px; color: #fff; margin-bottom: 10px; }
+  .shop-head p { color: var(--muted); font-size: 16px; }
+  
+  .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .shop-card {
+    background: rgba(21, 11, 42, 0.6); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; position: relative;
+    transition: 0.3s; display: flex; flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+  .shop-card:hover { transform: translateY(-8px); background: rgba(28, 16, 56, 0.8); }
+  
+  .shop-card.vip { border-top: 4px solid #a855f7; }
+  .shop-card.premium { border-top: 4px solid #22d3ee; transform: scale(1.05); z-index: 2; box-shadow: 0 15px 40px rgba(34,211,238,0.15); }
+  .shop-card.premium:hover { transform: scale(1.05) translateY(-8px); }
+  .shop-card.admin { border-top: 4px solid #ef4444; }
+
+  .popular-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(90deg, #22d3ee, #3b82f6); color: #fff;
+    padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(34,211,238,0.4);
+  }
+
+  .shop-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+  .shop-card.vip .shop-icon { background: rgba(168,85,247,0.15); box-shadow: 0 0 15px rgba(168,85,247,0.2); }
+  .shop-card.premium .shop-icon { background: rgba(34,211,238,0.15); box-shadow: 0 0 15px rgba(34,211,238,0.2); }
+  .shop-card.admin .shop-icon { background: rgba(239,68,68,0.15); box-shadow: 0 0 15px rgba(239,68,68,0.2); }
+
+  .shop-card h3 { font-size: 24px; margin-bottom: 8px; }
+  .shop-card.vip h3 { color: #c084fc; }
+  .shop-card.premium h3 { color: #22d3ee; }
+  .shop-card.admin h3 { color: #f87171; }
+  
+  .shop-card > p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  
+  .shop-features { list-style: none; margin-bottom: 32px; flex-grow: 1; }
+  .shop-features li { font-size: 14px; color: #d1c8e3; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
+  .shop-features li::before { content: '✓'; color: var(--green); font-weight: bold; margin-top: 2px; }
+  
+  .shop-price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px; }
+  .shop-price .amount { font-size: 42px; font-weight: 800; letter-spacing: -1px; font-family: 'Russo One', sans-serif;}
+  .shop-price .cur { color: var(--muted); font-size: 16px; font-weight: 600; }
+  
+  .btn-buy { width: 100%; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; display: flex; justify-content: center; align-items: center; color: #fff; font-family: 'Russo One', sans-serif; letter-spacing: 1px;}
+  .btn-buy.vip { background: linear-gradient(180deg, #a855f7, #7c3aed); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+  .btn-buy.vip:hover { box-shadow: 0 6px 20px rgba(124,58,237,0.6); transform: translateY(-2px); }
+  .btn-buy.premium { background: linear-gradient(180deg, #22d3ee, #0891b2); box-shadow: 0 4px 15px rgba(34,211,238,0.4); color: #0f0721; }
+  .btn-buy.premium:hover { box-shadow: 0 6px 20px rgba(34,211,238,0.6); transform: translateY(-2px); }
+  .btn-buy.admin { background: linear-gradient(180deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(220,38,38,0.4); }
+  .btn-buy.admin:hover { box-shadow: 0 6px 20px rgba(220,38,38,0.6); transform: translateY(-2px); }
+
+  /* ================= АДАПТИВ ================= */
   @media (max-width: 1024px) {
     .servers-grid { grid-template-columns: repeat(3, 1fr); }
-    .middle-grid { grid-template-columns: 1fr; }
+    .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    .shop-card.premium { transform: scale(1); }
+    .shop-card.premium:hover { transform: translateY(-8px); }
   }
   @media (max-width: 768px) {
-    .top-banners { grid-template-columns: 1fr; }
     .servers-grid { grid-template-columns: repeat(2, 1fr); }
-    .nav-inner { flex-direction: column; gap: 12px; padding: 12px; }
-    .nav-links { flex-wrap: wrap; justify-content: center; }
-    .hero-content h1 { font-size: 26px; }
-    .hero-slider { padding: 24px; min-height: 250px; }
-    .main-container { margin: 16px auto; padding: 0 16px; }
+    .shop-grid { grid-template-columns: 1fr; }
+    .nav-inner { flex-direction: column; gap: 16px; }
+    .hero-content h1 { font-size: 32px; }
+    .nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; }
   }
-
-  /* ================= WOW PACK СТИЛИ ================= */
-  :root{ --accent-2:#22d3ee; --muted:#b8aed0; }
-  body::after{ content:''; position:fixed; inset:0; pointer-events:none; z-index:0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.45) 100%); }
-  .online-badge{ border-color: rgba(34,211,238,.35); color:#67e8f9; }
-  .online-badge::before{ background:#22d3ee; box-shadow:0 0 8px #22d3ee; }
-  
-  .server-card::before{
-    content:''; position:absolute; inset:-1px; border-radius:16px; z-index:0;
-    background: conic-gradient(from var(--a,0deg), transparent 0%, #a855f7 15%, #22d3ee 30%, transparent 45%, transparent 100%);
-    animation: spin 4s linear infinite; opacity:0; transition:opacity .3s;
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; padding:1px;
-  }
-  .server-card:hover::before{ opacity:1; }
-  .server-card > *{ position:relative; z-index:1; }
-  @property --a{ syntax:'<angle>'; inherits:false; initial-value:0deg; }
-  @keyframes spin{ to{ --a:360deg; } }
-
-  .reveal{ opacity:0; transform: translateY(30px) scale(.98); }
-  .reveal.in{ animation: pageEnter .7s cubic-bezier(.16,1,.3,1) forwards; }
-  @keyframes pageEnter { 0% { opacity: 0; transform: translateY(30px) scale(1.01); } 100% { opacity: 1; transform: none; } }
 </style>
 </head>
 <body>
@@ -178,8 +208,8 @@
     <div class="nav-inner">
       <a href="#" class="logo">BAZA</a>
       <ul class="nav-links">
-        <li><a href="#" class="active">Главная</a></li>
-        <li><a href="#">Магазин</a></li>
+        <li><a href="#home" class="active">Главная</a></li>
+        <li><a href="#shop">Магазин</a></li>
         <li><a href="#">Правила</a></li>
       </ul>
       <div class="nav-actions">
@@ -189,104 +219,123 @@
     </div>
   </nav>
 
-  <div class="main-container">
-    <!-- ВЕРХНИЕ БАННЕРЫ -->
-    <div class="top-banners">
-      <div class="banner-card">
-        <div><h3>Telegram</h3><p>Подпишись на новости</p></div>
-        <div class="banner-icon tg-icon"></div>
-      </div>
-      <div class="banner-card">
-        <div><h3>Discord</h3><p>Общайся с игроками</p></div>
-        <div class="banner-icon dc-icon"></div>
-      </div>
-    </div>
-
-    <!-- ЦЕНТРАЛЬНЫЙ БЛОК -->
-    <div class="middle-grid">
-      <!-- Топ донатеров -->
-      <div class="donators-card">
-        <div class="donators-header">Топ донатеров</div>
-        <div class="donator-item">
-          <div class="donator-avatar">👑</div>
-          <div class="donator-info">
-            <div class="donator-name gold">Player1</div>
-            <div class="donator-desc">VIP статус</div>
-          </div>
-          <div class="donator-rank">1</div>
-        </div>
-        <div class="donator-item">
-          <div class="donator-avatar">🔥</div>
-          <div class="donator-info">
-            <div class="donator-name purple">NoobMaster</div>
-            <div class="donator-desc">Premium</div>
-          </div>
-          <div class="donator-rank">2</div>
-        </div>
-      </div>
-
-      <!-- Слайдер / Hero -->
-      <div class="hero-slider">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-          <h1>Добро пожаловать на BAZA</h1>
-          <p>Лучшие сервера CS2 с уникальными режимами и низким пингом.</p>
-          <a href="#" class="btn-hero">Начать играть</a>
-        </div>
+  <div class="main-container" id="home">
+    
+    <!-- ГЛАВНЫЙ БАННЕР -->
+    <div class="hero-slider">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1>Добро пожаловать на BAZA</h1>
+        <p>Лучшие сервера CS2 с уникальными режимами, низким пингом и активной администрацией.</p>
+        <a href="#shop" class="btn-hero">🔥 Купить привилегию</a>
       </div>
     </div>
 
     <!-- СЕТКА СЕРВЕРОВ -->
-    <div class="servers-grid">
-      <div class="server-card">
-        <div class="server-bg bg-public"></div>
-        <div class="server-content">
-          <div class="server-title">Public</div>
-          <div class="server-status">24/32</div>
+    <div>
+      <h2 class="section-title">Наши сервера</h2>
+      <div class="servers-grid">
+        <div class="server-card">
+          <div class="server-bg bg-public"></div>
+          <div class="server-content">
+            <div class="server-title">Public #1</div>
+            <div class="server-status">24/32</div>
+          </div>
         </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-fun"></div>
-        <div class="server-content">
-          <div class="server-title">Fun</div>
-          <div class="server-status">12/24</div>
+        <div class="server-card">
+          <div class="server-bg bg-fun"></div>
+          <div class="server-content">
+            <div class="server-title">Retake</div>
+            <div class="server-status">9/10</div>
+          </div>
         </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-sand"></div>
-        <div class="server-content">
-          <div class="server-title">Sand</div>
-          <div class="server-status">0/32</div>
+        <div class="server-card">
+          <div class="server-bg bg-sand"></div>
+          <div class="server-content">
+            <div class="server-title">Danger Zone</div>
+            <div class="server-status">16/16</div>
+          </div>
         </div>
-      </div>
-      <div class="server-card">
-        <div class="server-bg bg-duels"></div>
-        <div class="server-content">
-          <div class="server-title">Duels</div>
-          <div class="server-status">8/16</div>
+        <div class="server-card">
+          <div class="server-bg bg-duels"></div>
+          <div class="server-content">
+            <div class="server-title">AWP Only</div>
+            <div class="server-status">12/20</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- МАГАЗИН -->
+    <section class="shop-section" id="shop">
+      <div class="shop-head">
+        <h2>Магазин привилегий</h2>
+        <p>Поддержи проект и получи уникальные возможности на серверах</p>
+      </div>
+      
+      <div class="shop-grid">
+        <!-- VIP -->
+        <div class="shop-card vip">
+          <div class="shop-icon">👑</div>
+          <h3>VIP</h3>
+          <p>Базовый статус для комфортной игры</p>
+          <ul class="shop-features">
+            <li>Цветной ник в чате</li>
+            <li>Доступ к VIP-меню</li>
+            <li>Приоритет в очереди</li>
+            <li>+10 к лимиту брони</li>
+          </ul>
+          <div class="shop-price">
+            <span class="amount">199</span>
+            <span class="cur">₽ / мес</span>
+          </div>
+          <button class="btn-buy vip">Купить VIP</button>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="shop-card premium">
+          <div class="popular-badge">ВЫБОР ИГРОКОВ</div>
+          <div class="shop-icon">💎</div>
+          <h3>Premium</h3>
+          <p>Максимум возможностей и уважение</p>
+          <ul class="shop-features">
+            <li>Все привилегии VIP</li>
+            <li>Своя модель игрока</li>
+            <li>Обход слотов (вход на полный сервер)</li>
+            <li>Доступ к Premium-меню</li>
+            <li>Защита от кика за AFK</li>
+          </ul>
+          <div class="shop-price">
+            <span class="amount">399</span>
+            <span class="cur">₽ / мес</span>
+          </div>
+          <button class="btn-buy premium">Купить Premium</button>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="shop-card admin">
+          <div class="shop-icon">🛡️</div>
+          <h3>Админ</h3>
+          <p>Наведи порядок на сервере</p>
+          <ul class="shop-features">
+            <li>Все привилегии Premium</li>
+            <li>Полный доступ к админ-меню</li>
+            <li>Бан/Мут нарушителей</li>
+            <li>Телепорт к игрокам</li>
+            <li>Смена карты</li>
+          </ul>
+          <div class="shop-price">
+            <span class="amount">799</span>
+            <span class="cur">₽ / мес</span>
+          </div>
+          <button class="btn-buy admin">Стать Админом</button>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <!-- ================= WOW PACK СКРИПТЫ ================= -->
+  <!-- СКРИПТЫ -->
   <script>
-    // Появление по очереди
-    (function(){
-      const els = document.querySelectorAll('.server-card, .banner-card, .donator-item');
-      els.forEach(el => el.classList.add('reveal'));
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach((e, i) => {
-          if(e.isIntersecting){
-            e.target.style.animationDelay = (i * 0.1) + 's';
-            e.target.classList.add('in');
-            io.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.1 });
-      els.forEach(el => io.observe(el));
-    })();
-
     // Счётчик онлайна
     (function(){
       const badge = document.querySelector('.online-badge');
