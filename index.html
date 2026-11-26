@@ -1,13 +1,10 @@
-Ниже полностью исправленный файл. Все данные (серверы, тарифы, правила, админы, баны, кейсы) лежат в массивах в начале `<script>`, поэтому дальше вы правите только их, а вёрстку не трогаете.
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BAZA — сервера Counter-Strike 2</title>
-<meta name="description" content="BAZA-CS2 — проект серверов Counter-Strike 2: Public, Retake, AWP, Duels и другие режимы.">
+<title>BAZA — CS2 сервера</title>
+<meta name="description" content="BAZA-CS2 — сервера Counter-Strike 2: паблик, ретейки, AWP, дуэли. Мониторинг онлайна, привилегии, кейсы.">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -32,9 +29,8 @@
       radial-gradient(circle at 90% 80%, rgba(139,92,246,0.15), transparent 40%);
   }
   a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--accent-light); outline-offset: 2px; }
 
-  /* ============ ПЕРЕХОДЫ ============ */
+  /* ============ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ ============ */
   #page-root {
     transition: opacity .35s cubic-bezier(.4,0,.2,1), transform .35s cubic-bezier(.4,0,.2,1), filter .35s cubic-bezier(.4,0,.2,1);
   }
@@ -74,10 +70,10 @@
   }
   .nav-links a:hover, .nav-links a.active { color: var(--accent-light); background: rgba(255,255,255,0.05); }
   .online-badge {
-    background: rgba(16,185,129,0.15); color: var(--green);
+    background: rgba(16, 185, 129, 0.15); color: var(--green);
     padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;
     display: flex; align-items: center; gap: 6px; white-space: nowrap;
-    border: 1px solid rgba(16,185,129,0.3);
+    border: 1px solid rgba(16, 185, 129, 0.3);
   }
   .online-badge::before {
     content: ''; width: 6px; height: 6px; background: var(--green);
@@ -90,9 +86,8 @@
   .btn {
     padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 700;
     cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    text-decoration: none; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    text-decoration: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit; position: relative; overflow: hidden; user-select: none; letter-spacing: 0.3px;
-    color: var(--text);
   }
   .btn::after {
     content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -102,6 +97,7 @@
   .btn:hover::after { left: 150%; }
   .btn:active { transform: translateY(1px) scale(0.97) !important; box-shadow: none !important; }
   .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
+
   .btn-primary {
     background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%);
     border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(0,0,0,0.4);
@@ -109,12 +105,10 @@
   }
   .btn-primary:hover:not(:disabled) {
     background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
-    box-shadow: 0 6px 20px rgba(124,58,237,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124,58,237,0.6), inset 0 1px 0 rgba(255,255,255,0.3); transform: translateY(-2px);
   }
   .btn-outline {
-    background: rgba(61,36,112,0.15); border: 1px solid var(--border-hi);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    background: rgba(61, 36, 112, 0.15); border: 1px solid var(--border-hi); color: var(--text);
   }
   .btn-outline:hover {
     background: rgba(168,85,247,0.12); border-color: var(--accent-light); color: var(--accent-light);
@@ -123,13 +117,13 @@
   .btn-orange {
     background: linear-gradient(180deg, #563a21 0%, #2e1c0c 100%);
     border-top: 1px solid rgba(245,158,11,0.4); border-bottom: 1px solid rgba(0,0,0,0.5);
-    color: #fbbf24; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    color: #fbbf24; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
   .btn-orange:hover { background: linear-gradient(180deg, #6d4a2a 0%, #402712 100%); transform: translateY(-1px); }
   .btn-purple {
     background: linear-gradient(180deg, #3a2766 0%, #1f133b 100%);
     border-top: 1px solid rgba(168,85,247,0.3); border-bottom: 1px solid rgba(0,0,0,0.5);
-    color: #d1c8e3; box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    color: #d1c8e3; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
   .btn-purple:hover { background: linear-gradient(180deg, #4a327f 0%, #291a4d 100%); transform: translateY(-1px); }
   .btn-hero {
@@ -137,13 +131,9 @@
     color: #1e0f37; padding: 12px 24px; border-radius: 8px; font-weight: 800;
     text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
     border-top: 1px solid #fff; border-bottom: 1px solid #7c3aed;
-    box-shadow: 0 4px 15px rgba(167,139,250,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
-    transition: all 0.25s; position: relative; overflow: hidden;
+    box-shadow: 0 4px 15px rgba(167,139,250,0.4); transition: all 0.25s;
   }
-  .btn-hero:hover {
-    transform: translateY(-2px); background: linear-gradient(180deg, #f3e8ff 0%, #c4b5fd 100%);
-    box-shadow: 0 6px 20px rgba(167,139,250,0.6);
-  }
+  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(167,139,250,0.6); }
 
   /* ============ ГЛАВНАЯ ============ */
   .main-container {
@@ -159,43 +149,39 @@
     padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
     text-decoration: none; transition: transform .2s, border-color .2s;
   }
-  .banner-card:hover { transform: translateY(-2px); border-color: var(--border-hi); }
+  .banner-card:hover { transform: translateY(-3px); border-color: var(--border-hi); }
   .banner-card h3 { font-size: 16px; margin-bottom: 4px; }
   .banner-card p { color: var(--muted); font-size: 13px; }
   .banner-icon {
     width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 28px;
-    border-top: 1px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center; font-size: 32px;
   }
   .tg-icon { background: linear-gradient(180deg, #2AABEE, #229ED9); box-shadow: 0 4px 20px rgba(42,171,238,0.3); }
   .dc-icon { background: linear-gradient(180deg, #5865F2, #4752C4); box-shadow: 0 4px 20px rgba(88,101,242,0.3); }
 
   .middle-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
-
   .donators-card { padding: 24px; }
-  .donators-header { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+  .donators-header { margin-bottom: 16px; font-size: 14px; font-weight: 700; }
   .donators-toggle {
     display: flex; background: var(--bg); border-radius: 8px; padding: 4px;
     margin-bottom: 12px; border: 1px solid var(--border);
   }
   .donators-toggle button {
-    flex: 1; padding: 6px; border: none; background: transparent;
-    color: var(--muted); font-size: 12px; font-weight: 600;
-    border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: inherit;
+    flex: 1; padding: 6px; border: none; background: transparent; color: var(--muted);
+    font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: inherit;
   }
-  .donators-toggle button:hover { color: var(--text); }
-  .donators-toggle button.active { background: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 -2px 0 var(--accent); }
-  .donator-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); animation: msgIn .3s ease-out; }
+  .donators-toggle button.active { background: #fff; color: #000; box-shadow: inset 0 -2px 0 var(--accent); }
+  .donator-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .donator-item:last-child { border-bottom: none; padding-bottom: 0; }
   .donator-avatar {
     width: 40px; height: 40px; border-radius: 8px; background: var(--bg-2);
-    display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
   }
   .donator-info { flex: 1; min-width: 0; }
   .donator-name { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .donator-name.gold { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
-  .donator-name.purple { color: #d8b4fe; text-shadow: 0 0 10px rgba(216,180,254,0.3); }
-  .donator-name.blue { color: #93c5fd; text-shadow: 0 0 10px rgba(147,197,253,0.3); }
+  .donator-name.gold { color: #fbbf24; }
+  .donator-name.purple { color: #d8b4fe; }
+  .donator-name.blue { color: #93c5fd; }
   .donator-desc { font-size: 11px; color: var(--muted); }
   .donator-rank { font-size: 24px; font-weight: 900; color: var(--border-hi); font-style: italic; }
 
@@ -203,14 +189,12 @@
     background: linear-gradient(135deg, #1e0f37, #0f0721);
     border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden;
     display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; min-height: 300px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.3);
   }
   .hero-bg {
     position: absolute; inset: 0; z-index: 1;
     background:
       radial-gradient(circle at 70% 30%, rgba(168,85,247,0.4), transparent 50%),
-      radial-gradient(circle at 20% 80%, rgba(88,101,242,0.2), transparent 50%),
-      linear-gradient(to top, rgba(15,7,33,1) 0%, rgba(15,7,33,0.2) 60%, transparent 100%);
+      radial-gradient(circle at 20% 80%, rgba(88,101,242,0.2), transparent 50%);
   }
   .hero-art {
     position: absolute; inset: 0; z-index: 1;
@@ -218,9 +202,8 @@
     -webkit-mask-image: linear-gradient(to top, black 40%, transparent 100%);
     mask-image: linear-gradient(to top, black 40%, transparent 100%);
   }
-  .hero-content { position: relative; z-index: 2; max-width: 560px; }
-  .hero-content.fade { animation: tabFadeIn .45s ease; }
-  .hero-content h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .hero-content { position: relative; z-index: 2; max-width: 600px; animation: tabFadeIn .35s ease; }
+  .hero-content h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
   .hero-content p { color: #d1c8e3; margin-bottom: 24px; font-size: 15px; }
   .slider-arrows { position: absolute; bottom: 40px; right: 40px; display: flex; gap: 8px; z-index: 2; }
   .slider-arrows button {
@@ -229,28 +212,17 @@
     color: #fff; cursor: pointer; transition: 0.2s;
   }
   .slider-arrows button:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
-  .slider-dots { position: absolute; top: 24px; left: 40px; display: flex; gap: 6px; z-index: 2; }
-  .slider-dots button {
-    width: 24px; height: 4px; border-radius: 2px; border: none; cursor: pointer;
-    background: rgba(255,255,255,0.25); transition: .3s;
-  }
-  .slider-dots button.active { background: var(--accent-light); width: 40px; }
-
-  .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .section-title h2 { font-size: 22px; font-weight: 800; }
-  .section-title span { color: var(--muted); font-size: 14px; }
-  .section-title b { color: var(--green); }
 
   .servers-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .server-card {
+    display: block; text-decoration: none; color: inherit;
     background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-    overflow: hidden; position: relative; aspect-ratio: 3/4; min-height: 240px;
+    overflow: hidden; position: relative; aspect-ratio: 3/4;
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
   }
-  .server-card:hover {
+  .server-card:hover, .server-card:focus-visible {
     transform: translateY(-4px); border-color: var(--accent);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 15px rgba(168,85,247,0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 15px rgba(168,85,247,0.2); outline: none;
   }
   .server-bg {
     position: absolute; inset: 0; z-index: 1; opacity: 0.8;
@@ -259,39 +231,31 @@
   .server-bg::after { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
   .bg-public { background: linear-gradient(180deg, #1c1038 0%, #0a0416 100%); }
   .bg-public::after { content: '🕵️'; }
-  .bg-retake { background: linear-gradient(180deg, #2a1852 0%, #0a0416 100%); }
-  .bg-retake::after { content: '💣'; }
   .bg-fun { background: linear-gradient(180deg, #2a1b4d 0%, #0a0416 100%); }
   .bg-fun::after { content: '🤪'; }
   .bg-sand { background: linear-gradient(180deg, #3d2470 0%, #0a0416 100%); }
   .bg-sand::after { content: '🏜️'; }
   .bg-duels { background: linear-gradient(180deg, #1e0f37 0%, #0a0416 100%); }
   .bg-duels::after { content: '⚔️'; }
+  .bg-retake { background: linear-gradient(180deg, #2a1852 0%, #0a0416 100%); }
+  .bg-retake::after { content: '💣'; }
   .bg-awp { background: linear-gradient(180deg, #1c1038 0%, #0a0416 100%); }
   .bg-awp::after { content: '🎯'; }
   .server-content {
-    position: absolute; inset: 0; z-index: 2; padding: 14px;
+    position: absolute; inset: 0; z-index: 2; padding: 16px;
     display: flex; flex-direction: column; justify-content: space-between;
-    background: linear-gradient(to top, rgba(10,4,22,0.97) 0%, rgba(10,4,22,0.3) 55%, transparent 75%);
+    background: linear-gradient(to top, rgba(10,4,22,0.95) 0%, transparent 50%);
   }
   .server-title { font-size: 16px; font-weight: 800; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-  .server-map { font-size: 12px; color: var(--muted); }
+  .server-bottom { display: flex; flex-direction: column; gap: 4px; }
   .server-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); font-weight: 600; }
-  .server-status::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
-  .server-status.full { color: var(--yellow); }
+  .server-status::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
   .server-status.empty { color: var(--muted); }
-  .server-status.empty::before { box-shadow: none; }
-  .server-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin: 6px 0 10px; overflow: hidden; }
-  .server-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 2px; }
-  .server-actions { display: flex; gap: 6px; }
-  .srv-btn {
-    flex: 1; padding: 7px 8px; border-radius: 7px; font-size: 12px; font-weight: 700;
-    text-align: center; text-decoration: none; cursor: pointer; font-family: inherit;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; transition: .2s;
-  }
-  .srv-btn:hover { background: rgba(255,255,255,0.16); }
-  .srv-btn.play { flex: 2; background: linear-gradient(180deg, #b16cf9, #8b31f5); border-color: rgba(255,255,255,0.2); }
-  .srv-btn.play:hover { filter: brightness(1.1); }
+  .server-status.empty::before { background: var(--muted); box-shadow: none; }
+  .server-status.full { color: var(--yellow); }
+  .server-status.full::before { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .server-connect { font-size: 11px; color: var(--accent-light); font-weight: 700; opacity: 0; transition: opacity .2s; }
+  .server-card:hover .server-connect { opacity: 1; }
 
   .bottom-desc { padding: 24px; }
   .bottom-desc h2 { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
@@ -303,25 +267,23 @@
   .page-head { text-align: center; margin-bottom: 40px; }
   .page-head h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; }
   .page-head p { color: var(--muted); font-size: 17px; max-width: 560px; margin: 0 auto; }
-  .tagline {
+  .page-head .tagline {
     display: inline-block; font-size: 12px; font-weight: 700; color: var(--accent-light); letter-spacing: 2px;
     padding: 6px 14px; border-radius: 100px; background: rgba(168,85,247,0.1);
     border: 1px solid rgba(168,85,247,0.28); margin-bottom: 18px;
   }
 
+  /* Магазин */
   .shop-tabs-wrap { max-width: 460px; margin: 0 auto 40px; }
-  .shop-tabs {
-    display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
-  }
+  .shop-tabs { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 6px; }
   .shop-tab {
     flex: 1; padding: 12px 20px; border: none; background: transparent; color: var(--muted);
     font-weight: 600; font-size: 15px; border-radius: 8px; cursor: pointer; transition: all .2s;
     font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   .shop-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .shop-tab.active { background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-  .tab-badge { background: rgba(34,197,94,0.2); color: var(--green); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+  .shop-tab.active { background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%); color: #fff; }
+  .shop-tab .tab-badge { background: rgba(34,197,94,0.2); color: var(--green); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
   .shop-tab.active .tab-badge { background: rgba(255,255,255,0.25); color: #fff; }
   .tab-panel { animation: tabFadeIn .35s ease; }
   @keyframes tabFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -329,14 +291,9 @@
   .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
   .shop-card {
     background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px;
-    position: relative; display: flex; flex-direction: column; transition: transform .25s, background .25s;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform .25s, background .25s, box-shadow .25s; display: flex; flex-direction: column;
   }
-  .shop-card:hover { transform: translateY(-4px); background: var(--card-2); }
-  .shop-card .hit {
-    position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 800; letter-spacing: 1px;
-    padding: 3px 9px; border-radius: 6px; background: rgba(59,130,246,0.2); color: #78b0ff;
-  }
+  .shop-card:hover { transform: translateY(-4px); background: var(--card-2); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
   .shop-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; }
   .shop-card.vip { border-color: rgba(168,85,247,0.35); }
   .shop-card.vip .shop-icon { background: rgba(168,85,247,0.12); }
@@ -357,124 +314,92 @@
   .shop-card li::before { content: '✓'; color: var(--green); font-weight: 700; }
   .shop-card .btn { width: 100%; padding: 12px; font-size: 15px; }
 
+  /* Кейсы */
   .cases-hero {
-    background: linear-gradient(160deg, var(--card), var(--bg-2)); border: 1px solid var(--border);
-    border-radius: 20px; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-    align-items: center; margin-bottom: 26px;
+    background: linear-gradient(160deg, var(--card), var(--bg-2));
+    border: 1px solid var(--border); border-radius: 20px; padding: 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 26px;
   }
-  .cases-hero h2 { font-size: 30px; font-weight: 800; margin-bottom: 12px; }
-  .free-timer { display: flex; gap: 8px; margin: 20px 0; min-height: 62px; align-items: center; }
+  .cases-hero-info h2 { font-size: 30px; font-weight: 800; margin-bottom: 12px; }
+  .free-timer { display: flex; gap: 8px; margin: 20px 0; min-height: 30px; align-items: center; }
   .timer-cell { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 60px; }
   .timer-cell .num { font-size: 22px; font-weight: 800; color: var(--accent-light); }
   .timer-cell .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
   .big-case { font-size: 120px; animation: caseFloat 4s ease-in-out infinite; text-align: center; filter: drop-shadow(0 10px 30px rgba(168,85,247,0.3)); }
   @keyframes caseFloat { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
   .case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-  .case-card { padding: 24px; text-align: center; transition: transform .25s; }
+  .case-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; transition: transform .25s; }
   .case-card:hover { transform: translateY(-4px); }
   .case-visual { font-size: 68px; margin-bottom: 12px; }
   .case-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-  .case-card .case-count { font-size: 12px; color: var(--muted); }
   .case-price { font-size: 24px; font-weight: 800; margin: 16px 0; }
 
+  /* Правила / Админы / FAQ / Баны */
   .rules-list { max-width: 850px; margin: 0 auto; }
-  .rule-item { padding: 20px 22px; margin-bottom: 10px; display: flex; gap: 16px; border-radius: 12px; }
+  .rule-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; display: flex; gap: 16px; padding: 20px 22px; }
   .rule-num {
-    width: 36px; height: 36px; flex-shrink: 0; background: rgba(168,85,247,0.1);
-    border: 1px solid rgba(168,85,247,0.28); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: var(--accent-light); font-size: 14px;
+    width: 36px; height: 36px; flex-shrink: 0; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.28);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--accent-light); font-size: 14px;
   }
-  .rule-item p { color: #cfc6e0; font-size: 14.5px; padding-top: 6px; }
+  .rule-content p { color: #c9c0dc; font-size: 14.5px; }
 
   .admins-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  .admin-card { padding: 20px; display: flex; align-items: center; gap: 14px; border-radius: 14px; }
+  .admin-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 14px; }
   .admin-avatar {
     width: 52px; height: 52px; border-radius: 10px; flex-shrink: 0;
     background: linear-gradient(180deg, #b16cf9 0%, #8b31f5 100%);
-    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff;
   }
   .admin-info h4 { font-size: 15.5px; margin-bottom: 2px; }
   .admin-info p { font-size: 13px; color: var(--muted); }
-  .admin-badge {
-    display: inline-block; padding: 2px 9px; background: rgba(168,85,247,0.1); color: var(--accent-light);
-    border-radius: 5px; font-size: 11px; font-weight: 700; margin-top: 6px; border: 1px solid rgba(168,85,247,0.2);
-  }
-  .admin-badge.owner { background: rgba(251,191,36,0.12); color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+  .admin-badge { display: inline-block; padding: 2px 9px; background: rgba(168,85,247,0.1); color: var(--accent-light); border-radius: 5px; font-size: 11px; font-weight: 700; margin-top: 6px; border: 1px solid rgba(168,85,247,0.2); }
 
   .faq { max-width: 800px; margin: 0 auto; }
-  .faq-item { margin-bottom: 10px; overflow: hidden; border-radius: 12px; }
+  .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
   .faq-q {
-    width: 100%; padding: 18px 22px; cursor: pointer; font-weight: 600; font-size: 15.5px;
+    width: 100%; padding: 18px 22px; cursor: pointer; font-weight: 600; font-size: 15.5px; text-align: left;
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    background: none; border: none; color: inherit; font-family: inherit; text-align: left;
+    background: none; border: none; color: var(--text); font-family: inherit;
   }
-  .faq-q .arrow { color: var(--accent-light); font-size: 22px; transition: transform 0.3s; flex-shrink: 0; }
+  .faq-q .arrow { color: var(--accent-light); font-size: 22px; transition: transform 0.3s; }
   .faq-item.open .arrow { transform: rotate(45deg); }
   .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--muted); font-size: 14.5px; padding: 0 22px; }
-  .faq-item.open .faq-a { max-height: 600px; padding: 0 22px 20px; }
+  .faq-item.open .faq-a { max-height: 400px; padding: 0 22px 20px; }
   .faq-a code { background: var(--bg-2); padding: 2px 6px; border-radius: 4px; color: var(--accent-light); }
-  .faq-footer { text-align: center; margin-top: 30px; color: var(--muted); }
-  .faq-footer .btn { margin-top: 12px; }
 
-  .bans-tools { max-width: 1000px; margin: 0 auto 14px; }
-  .bans-tools input {
-    width: 100%; padding: 12px 15px; background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--text); font-size: 15px; outline: none; font-family: inherit;
-  }
-  .bans-tools input:focus { border-color: var(--accent); }
-  .bans-wrap { max-width: 1000px; margin: 0 auto; overflow-x: auto; border-radius: 14px; }
-  .bans-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+  .bans-wrap { max-width: 1000px; margin: 0 auto; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; }
+  .bans-table { width: 100%; min-width: 600px; border-collapse: collapse; }
   .bans-table th { text-align: left; padding: 14px 18px; font-size: 12px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
   .bans-table td { padding: 14px 18px; font-size: 14px; border-bottom: 1px solid var(--border); }
   .bans-table tr:last-child td { border-bottom: none; }
-  .bans-empty { text-align: center; color: var(--muted); padding: 30px !important; }
   .ban-perm { padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
   .ban-perm.permanent { background: rgba(239,68,68,0.12); color: #ff7b78; border-color: rgba(239,68,68,0.3); }
   .ban-perm.temp { background: rgba(168,85,247,0.12); color: var(--accent-light); border-color: rgba(168,85,247,0.3); }
 
-  /* ============ МОДАЛКА ЗАКАЗА ============ */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(5,2,12,0.8); backdrop-filter: blur(8px);
-    display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px;
-  }
-  .modal-overlay.active { display: flex; animation: fadeIn .25s ease; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .modal {
-    background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px;
-    padding: 32px; max-width: 440px; width: 100%; position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6); animation: tabFadeIn .3s ease;
-  }
+  /* Модалка заказа */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(5,2,12,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px; padding: 32px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.6); animation: tabFadeIn .25s ease; }
   .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--muted); font-size: 26px; cursor: pointer; }
-  .modal-close:hover { color: var(--text); }
   .modal h3 { font-size: 20px; margin-bottom: 6px; }
   .modal .plan-tag { color: var(--accent-light); font-weight: 600; margin-bottom: 20px; font-size: 15px; }
   .modal label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
   .modal input, .modal select {
-    width: 100%; padding: 12px 15px; margin-bottom: 14px; background: var(--bg-2);
-    border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px;
-    outline: none; font-family: inherit;
+    width: 100%; padding: 12px 15px; margin-bottom: 14px; font-family: inherit;
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px; outline: none;
   }
   .modal input:focus, .modal select:focus { border-color: var(--accent); }
-  .modal input.invalid { border-color: var(--red); }
-  .modal .total { display: flex; justify-content: space-between; font-weight: 700; margin: 4px 0 14px; }
-  .modal .total b { font-size: 20px; color: var(--accent-light); }
   .modal .btn { width: 100%; margin-top: 6px; padding: 13px; }
+  .modal-note { font-size: 12px; color: var(--muted); margin-top: 12px; text-align: center; }
 
-  /* ============ РУЛЕТКА ============ */
-  #caseModal {
-    position: fixed; inset: 0; z-index: 500; background: rgba(5,2,12,0.94); backdrop-filter: blur(12px);
-    display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
-  }
-  #caseModal.active { display: flex; animation: fadeIn .3s ease; }
+  /* Рулетка */
+  #caseModal { position: fixed; inset: 0; z-index: 500; background: rgba(5,2,12,0.94); backdrop-filter: blur(12px); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  #caseModal.active { display: flex; }
   .roulette-wrap { width: 100%; max-width: 1000px; }
   .roulette-header { text-align: center; margin-bottom: 28px; }
   .roulette-header .title { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 3px; margin-bottom: 6px; }
   .roulette-header .case-name { font-size: 26px; font-weight: 800; }
-  .roulette-track-wrap {
-    position: relative; background: var(--bg-2); border: 1px solid var(--border-hi);
-    border-radius: 14px; padding: 20px 0; overflow: hidden; box-shadow: inset 0 4px 24px rgba(0,0,0,0.6);
-  }
+  .roulette-track-wrap { position: relative; background: var(--bg-2); border: 1px solid var(--border-hi); border-radius: 14px; padding: 20px 0; overflow: hidden; }
   .roulette-track-wrap::before, .roulette-track-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 3; pointer-events: none; }
   .roulette-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-2), transparent); }
   .roulette-track-wrap::after { right: 0; background: linear-gradient(-90deg, var(--bg-2), transparent); }
@@ -484,135 +409,90 @@
   .roulette-pointer::after { bottom: -2px; border-bottom: 11px solid var(--accent-light); }
   .roulette-track { display: flex; gap: 8px; will-change: transform; }
   .roulette-track.animate { transition: transform 5s cubic-bezier(0.12, 0.75, 0.15, 1); }
-  .roulette-item {
-    flex-shrink: 0; width: 130px; height: 160px; background: var(--card); border: 1px solid var(--border-hi);
-    border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; padding: 10px; position: relative; text-align: center;
-  }
-  .roulette-item::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--rc); border-radius: 0 0 10px 10px; }
+  .roulette-item { flex-shrink: 0; width: 130px; height: 160px; background: var(--card); border: 1px solid var(--border-hi); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; position: relative; text-align: center; }
+  .roulette-item::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 10px 10px; }
+  .rar-consumer::before { background: var(--r-consumer); }
+  .rar-industrial::before { background: var(--r-industrial); }
+  .rar-milspec::before { background: var(--r-milspec); }
+  .rar-restricted::before { background: var(--r-restricted); }
+  .rar-classified::before { background: var(--r-classified); }
+  .rar-covert::before { background: var(--r-covert); }
+  .rar-rare::before { background: var(--r-rare); }
   .roulette-item .item-emoji { font-size: 36px; }
   .roulette-item .item-name { font-size: 11px; font-weight: 600; line-height: 1.2; }
   .roulette-result { margin-top: 28px; text-align: center; opacity: 0; transform: translateY(16px); transition: 0.4s; }
   .roulette-result.show { opacity: 1; transform: none; }
-  .result-card { display: inline-block; padding: 22px 36px; background: var(--card); border: 2px solid var(--rc, var(--accent-light)); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+  .result-card { display: inline-block; padding: 22px 36px; background: var(--card); border: 2px solid var(--accent-light); border-radius: 14px; }
   .result-card .res-emoji { font-size: 52px; margin-bottom: 8px; }
   .result-card .res-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-  .result-card .res-rarity { font-size: 13px; font-weight: 700; color: var(--rc); }
+  .result-card .res-rarity { font-size: 13px; color: var(--muted); }
+  .result-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
   .roulette-actions { margin-top: 22px; display: flex; gap: 12px; justify-content: center; }
 
-  /* ============ ТОСТ ============ */
-  .toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(140px);
-    background: var(--green); color: #04120a; padding: 13px 26px; border-radius: 10px;
-    font-weight: 700; font-size: 14.5px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    transition: transform .4s; z-index: 700; max-width: calc(100% - 40px); text-align: center;
-  }
+  /* Тост */
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px); background: var(--green); color: #04120a; padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 14.5px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform .4s; z-index: 700; max-width: calc(100% - 40px); text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: var(--red); color: #fff; }
-  .toast.warn { background: var(--yellow); color: #1a1000; }
-  .toast.info { background: var(--accent); color: #fff; }
   @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
 
   /* ============ ЧАТ ============ */
   .chat-fab {
-    position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%;
+    position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; border: none;
     background: linear-gradient(180deg, #e9d5ff 0%, #c4b5fd 100%); color: #1e0f37;
-    display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
-    z-index: 100; border: none; box-shadow: 0 4px 20px rgba(196,181,253,0.5);
-    transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275), background 0.3s;
-    animation: fabPulse 2s infinite;
+    display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 100;
+    box-shadow: 0 4px 20px rgba(196,181,253,0.5); transition: transform 0.3s, background 0.3s;
   }
   .chat-fab:hover { transform: scale(1.08); }
-  .chat-fab.open { animation: none; background: linear-gradient(180deg, #ff7b78 0%, #ef4444 100%); color: #fff; transform: rotate(90deg) scale(0.95); }
-  @keyframes fabPulse {
-    0% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 0 rgba(196,181,253,0.6); }
-    70% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 15px rgba(196,181,253,0); }
-    100% { box-shadow: 0 4px 20px rgba(196,181,253,0.5), 0 0 0 0 rgba(196,181,253,0); }
-  }
+  .chat-fab.open { background: linear-gradient(180deg, #ff7b78 0%, #ef4444 100%); color: #fff; transform: rotate(90deg) scale(0.95); }
   .chat-widget {
     position: fixed; bottom: 90px; right: 24px; width: 340px; height: 480px; max-height: calc(100vh - 120px);
     background: var(--card); border: 1px solid var(--border-hi); border-radius: 16px;
     display: flex; flex-direction: column; z-index: 99; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     transform-origin: bottom right; transform: scale(0); opacity: 0; pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.3s;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
   }
   .chat-widget.active { transform: scale(1); opacity: 1; pointer-events: auto; }
-  .chat-header {
-    padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center;
-    justify-content: space-between; background: var(--bg-2); border-radius: 16px 16px 0 0;
-  }
+  .chat-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-2); border-radius: 16px 16px 0 0; }
   .chat-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .chat-status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
-  .chat-close { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+  .chat-close { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; }
   .chat-close:hover { color: var(--text); }
-  .chat-messages {
-    flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
-    scrollbar-width: thin; scrollbar-color: var(--border-hi) transparent;
-  }
-  .chat-msg { max-width: 85%; display: flex; flex-direction: column; animation: msgIn 0.3s ease-out; }
-  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; scrollbar-color: var(--border-hi) transparent; }
+  .chat-msg { max-width: 85%; display: flex; flex-direction: column; animation: tabFadeIn 0.3s ease-out; }
   .chat-msg.support { align-self: flex-start; }
   .chat-msg.user { align-self: flex-end; align-items: flex-end; }
-  .msg-bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+  .msg-bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-break: break-word; }
   .msg-bubble a { color: var(--accent-light); }
   .chat-msg.support .msg-bubble { background: var(--bg-2); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: #d1c8e3; }
   .chat-msg.user .msg-bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
   .msg-time { font-size: 10px; color: var(--muted); margin: 4px 4px 0; }
-  .chat-quick { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chat-quick button {
-    padding: 6px 10px; border-radius: 100px; font-size: 12px; font-family: inherit; cursor: pointer;
-    background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: var(--accent-light);
-  }
-  .chat-quick button:hover { background: rgba(168,85,247,0.2); }
-  .typing-indicator {
-    display: flex; gap: 4px; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 12px; border-bottom-left-radius: 4px; width: fit-content; align-self: flex-start;
-  }
-  .typing-indicator span { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
-  .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-  .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes typing { 0%,80%,100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
   .chat-input-area { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-2); border-radius: 0 0 16px 16px; display: flex; gap: 8px; }
-  .chat-input-area input {
-    flex: 1; background: var(--card); border: 1px solid var(--border-hi); border-radius: 8px;
-    padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit;
-  }
+  .chat-input-area input { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--border-hi); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
   .chat-input-area input:focus { border-color: var(--accent); }
-  .chat-input-area button {
-    background: var(--accent); border: none; border-radius: 8px; width: 40px; color: #fff;
-    font-size: 18px; cursor: pointer; transition: 0.2s;
-  }
+  .chat-input-area button { background: var(--accent); border: none; border-radius: 8px; width: 40px; color: #fff; font-size: 18px; cursor: pointer; }
   .chat-input-area button:hover { background: var(--accent-light); }
 
   /* ============ АДАПТИВ ============ */
   @media (max-width: 1200px) { .servers-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 992px) {
     .middle-grid, .top-banners { grid-template-columns: 1fr; }
-    .nav-inner { flex-wrap: wrap; row-gap: 10px; }
+    .nav-inner { flex-wrap: wrap; gap: 12px; }
     .nav-links { order: 3; width: 100%; }
-    .cases-hero { grid-template-columns: 1fr; text-align: center; }
-    .free-timer { justify-content: center; }
-    .big-case { font-size: 90px; order: -1; }
   }
   @media (max-width: 768px) {
     .servers-grid { grid-template-columns: repeat(2, 1fr); }
-    .hero-slider { min-height: 260px; padding: 24px; }
+    .hero-slider { min-height: 250px; padding: 24px 24px 80px; }
     .hero-content h1 { font-size: 24px; }
-    .slider-arrows { display: none; }
-    .slider-dots { left: 24px; }
-    .chat-widget { width: calc(100% - 48px); bottom: 85px; }
-    .roulette-item { width: 104px; height: 136px; }
-    .cases-hero { padding: 26px; }
+    .slider-arrows { bottom: 20px; right: 20px; }
+    .cases-hero { grid-template-columns: 1fr; padding: 24px; }
+    .big-case { display: none; }
+    .chat-widget { width: calc(100% - 48px); bottom: 90px; }
+    .main-container { padding: 0 16px; }
+    section.inner-page { padding: 30px 16px 80px; }
   }
   @media (max-width: 480px) {
-    .servers-grid { grid-template-columns: 1fr; }
-    .server-card { aspect-ratio: auto; height: 220px; }
     .nav-actions .btn-orange { display: none; }
-    .main-container { padding: 0 14px; }
-    section.inner-page { padding: 30px 14px 60px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .nav-inner { padding: 10px 16px; }
   }
 </style>
 </head>
@@ -622,55 +502,57 @@
   <div class="nav-inner">
     <a href="#/" class="logo">BAZA</a>
     <ul class="nav-links">
-      <li><div class="online-badge"><span id="navOnline">0 онлайн</span></div></li>
+      <li><div class="online-badge"><span id="navOnline">0</span>&nbsp;онлайн</div></li>
       <li><a href="#/shop" data-route="/shop">👑 Донат</a></li>
-      <li><a href="#/admins" data-route="/admins">🛡️ Администрация</a></li>
+      <li><a href="#/admins" data-route="/admins">🎮 Админы</a></li>
       <li><a href="#/rules" data-route="/rules">📜 Правила</a></li>
       <li><a href="#/faq" data-route="/faq">❓ FAQ</a></li>
-      <li><a href="#/bans" data-route="/bans">⛔ Баны</a></li>
+      <li><a href="#/bans" data-route="/bans">🛡️ Баны</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="btn btn-orange" onclick="showToast('Пополнение баланса скоро появится', 'info')">💰 Пополнить</button>
-      <button class="btn btn-purple" onclick="showToast('Вход через Steam скоро появится', 'info')">🔑 Войти</button>
+      <button class="btn btn-orange" onclick="showToast('Функция в разработке', 'error')">💰 Пополнить</button>
+      <button class="btn btn-purple" onclick="showToast('Функция в разработке', 'error')">🔑 Войти</button>
     </div>
   </div>
 </nav>
 
 <main id="page-root" class="main-container"></main>
 
-<div class="chat-widget" id="chatWidget" role="dialog" aria-label="Помощь">
+<!-- ЧАТ -->
+<div class="chat-widget" id="chatWidget">
   <div class="chat-header">
-    <div class="chat-title"><div class="chat-status-dot"></div> Помощник BAZA</div>
-    <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть">×</button>
+    <div class="chat-title"><div class="chat-status-dot"></div> Поддержка BAZA</div>
+    <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть чат">×</button>
   </div>
   <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="Например: как зайти на сервер?" autocomplete="off">
+    <input type="text" id="chatInput" placeholder="Сообщение..." onkeydown="if (event.key === 'Enter') sendChatMessage()">
     <button onclick="sendChatMessage()" aria-label="Отправить">➤</button>
   </div>
 </div>
-<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Помощь">💬</button>
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Чат поддержки">💬</button>
 
+<!-- МОДАЛКА ЗАКАЗА -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
     <button class="modal-close" onclick="closeModal()" aria-label="Закрыть">×</button>
-    <h3 id="modalTitle">Оформление заказа</h3>
-    <div class="plan-tag" id="modalPlan">VIP</div>
+    <h3>Оформление заказа</h3>
+    <div class="plan-tag" id="modalPlan">—</div>
     <label for="orderSteam">Ваш Steam ID или ссылка на профиль</label>
     <input type="text" placeholder="STEAM_0:1:12345678" id="orderSteam">
-    <label for="orderContact">Способ связи (необязательно)</label>
+    <label for="orderContact">Способ связи</label>
     <input type="text" placeholder="@username в Telegram" id="orderContact">
     <label for="orderPeriod">Срок</label>
-    <select id="orderPeriod">
+    <select id="orderPeriod" onchange="updateModalPrice()">
       <option value="1">1 месяц</option>
       <option value="3">3 месяца (−10%)</option>
-      <option value="6">6 месяцев (−20%)</option>
     </select>
-    <div class="total"><span>Итого:</span><b id="orderTotal">0 ₽</b></div>
-    <button class="btn btn-primary" id="orderSubmit" onclick="submitOrder()">Перейти к оплате</button>
+    <button class="btn btn-primary" onclick="submitOrder()">Оформить через поддержку</button>
+    <div class="modal-note">Онлайн-оплата пока не подключена. Заказ оформляется через поддержку в Telegram.</div>
   </div>
 </div>
 
+<!-- РУЛЕТКА -->
 <div id="caseModal">
   <div class="roulette-wrap">
     <div class="roulette-header">
@@ -683,67 +565,84 @@
     </div>
     <div class="roulette-result" id="rouletteResult">
       <div class="result-card" id="resultCard">
-        <div class="res-emoji" id="resEmoji">🔫</div>
-        <div class="res-name" id="resName">—</div>
-        <div class="res-rarity" id="resRarity">—</div>
+        <div class="res-emoji" id="resEmoji"></div>
+        <div class="res-name" id="resName"></div>
+        <div class="res-rarity" id="resRarity"></div>
       </div>
+      <div class="result-note">Демо-режим: автоматическая выдача призов пока не подключена.</div>
     </div>
     <div class="roulette-actions">
-      <button class="btn btn-primary" id="closeCaseBtn" onclick="closeCaseModal()" style="display:none;">Забрать приз</button>
-      <button class="btn btn-outline" id="openAgainBtn" onclick="openAgain()" style="display:none;">Открыть ещё</button>
+      <button class="btn btn-primary" id="closeCaseBtn" onclick="closeCaseModal()" style="display:none;">Закрыть</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast"></div>
 
 <script>
 /* =====================================================================
-   НАСТРОЙКИ И ДАННЫЕ — правьте только этот блок
+   НАСТРОЙКИ И ДАННЫЕ. Чтобы что-то поменять на сайте, правьте этот блок.
    ===================================================================== */
+
+// Ссылки: замените на свои
 const CONFIG = {
-  telegram: 'https://t.me/baza_cs2',      // TODO: ваша ссылка
-  discord:  'https://discord.gg/baza',    // TODO: ваша ссылка
-  support:  'https://t.me/baza_support',  // TODO: живая поддержка
-  orderEndpoint: '',                      // TODO: например '/api/order' — пока пусто, оплата не подключена
+  telegram: 'https://t.me/baza_cs2',      // Telegram-канал
+  discord:  'https://discord.gg/baza',    // приглашение в Discord
+  support:  'https://t.me/baza_support',  // куда писать по покупкам и вопросам
 };
 
-// TODO: реальные IP и порты. Онлайн пока статичный — позже его будет отдавать бэкенд.
+// Серверы. Порты, кроме первого, указаны для примера: поставьте настоящие.
+// players/max пока задаются вручную: живой онлайн требует бэкенда.
+// bg: public | retake | awp | fun | sand | duels
 const SERVERS = [
-  { name: 'Public #1', map: 'de_mirage',    ip: '185.230.140.77:27015', bg: 'public', players: 18, max: 32 },
-  { name: 'Retake #1', map: 'de_inferno',   ip: '185.230.140.77:27016', bg: 'retake', players: 9,  max: 10 },
-  { name: 'AWP',       map: 'awp_lego_2',   ip: '185.230.140.77:27017', bg: 'awp',    players: 12, max: 20 },
-  { name: 'Duels',     map: 'aim_map',      ip: '185.230.140.77:27018', bg: 'duels',  players: 0,  max: 16 },
-  { name: 'Fun',       map: 'fy_pool_day',  ip: '185.230.140.77:27019', bg: 'fun',    players: 9,  max: 24 },
-  { name: 'Sandstone', map: 'de_sandstone', ip: '185.230.140.77:27020', bg: 'sand',   players: 9,  max: 20 },
+  { name: 'Public #1', ip: '185.230.140.77:27015', bg: 'public', players: 18, max: 32 },
+  { name: 'Retake #1', ip: '185.230.140.77:27016', bg: 'retake', players: 9,  max: 10 },
+  { name: 'AWP Only',  ip: '185.230.140.77:27017', bg: 'awp',    players: 12, max: 20 },
+  { name: 'FUN',       ip: '185.230.140.77:27018', bg: 'fun',    players: 9,  max: 20 },
+  { name: 'Sandstone', ip: '185.230.140.77:27019', bg: 'sand',   players: 9,  max: 20 },
+  { name: 'Duels',     ip: '185.230.140.77:27020', bg: 'duels',  players: 0,  max: 10 },
 ];
 
+// Привилегии. Цены и возможности задаются только здесь.
 const PLANS = [
-  { id: 'vip', name: 'VIP', icon: '👑', price: 199, desc: 'Базовый набор привилегий', features: [
-    'Префикс [VIP] в чате', 'Цветной ник', 'Доступ к !vip меню', 'Приоритет в очереди' ]},
-  { id: 'premium', name: 'PREMIUM', icon: '💎', price: 499, hit: true, desc: 'Максимум возможностей', features: [
-    'Всё из VIP', 'Анимированный префикс', 'Резервный слот на полном сервере', 'Защита от кика за AFK' ]},
-  { id: 'admin', name: 'ADMIN', icon: '🛡️', price: 999, desc: 'Помогай поддерживать порядок', features: [
-    'Всё из PREMIUM', 'Админ-меню (kick, mute)', 'Тег [ADMIN] в чате', 'Голосование за смену карты' ]},
-];
-const PERIOD_DISCOUNT = { 1: 0, 3: 0.10, 6: 0.20 };
-
-const SLIDES = [
-  { title: 'Магазин привилегий', text: 'Приобрети привилегию и наслаждайся игрой с бонусами на всех серверах BAZA.', btn: '↗ За покупками', href: '#/shop' },
-  { title: 'Бесплатный кейс', text: 'Каждые 2 часа — бесплатное открытие кейса. Заходи и забирай приз!', btn: '🎁 Открыть кейс', href: '#/shop?cases' },
-  { title: 'Наш Telegram', text: 'Новости, розыгрыши и ваучеры — первыми узнают подписчики.', btn: '✈️ Подписаться', href: CONFIG.telegram, external: true },
+  { id: 'vip', name: 'VIP', icon: '👑', price: 199, desc: 'Базовый набор привилегий', btn: 'btn-outline',
+    features: ['Префикс [VIP] в чате', 'Цветной ник', 'Доступ к VIP-скинам', '+50 HP при респавне'] },
+  { id: 'premium', name: 'PREMIUM', icon: '💎', price: 499, desc: 'Максимум возможностей', btn: 'btn-primary',
+    features: ['Всё из VIP', 'Анимированный префикс', 'Смена ника 1 раз в день', '+100 HP и брони'] },
+  { id: 'admin', name: 'ADMIN', icon: '🛡️', price: 999, desc: 'Стань админом сервера', btn: 'btn-outline',
+    features: ['Всё из PREMIUM', 'Модерация (/ban, /kick)', 'Тег [ADMIN] в чате', 'Смена карты (/map)'] },
 ];
 
+// Топ донатеров по периодам. color: gold | purple | blue
 const DONATORS = {
-  week:  [ { n: 'neverlie', d: 'PREMIUM · 1 месяц', c: 'gold' }, { n: "MaJleHbkuu' SnipeR", d: 'VIP · 3 месяца', c: 'purple' }, { n: 'geminikim183', d: 'VIP · 1 месяц', c: 'blue' } ],
-  month: [ { n: 'Vortex', d: 'ADMIN · 1 месяц', c: 'gold' }, { n: 'neverlie', d: 'PREMIUM · 1 месяц', c: 'purple' }, { n: 'kirpich228', d: 'PREMIUM · 1 месяц', c: 'blue' } ],
-  all:   [ { n: 'Vortex', d: 'С проектом с 2024', c: 'gold' }, { n: 'neverlie', d: 'С проектом с 2024', c: 'purple' }, { n: 'Shadow_FX', d: 'С проектом с 2025', c: 'blue' } ],
+  '7': [
+    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'PREMIUM' },
+    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'purple', desc: 'VIP' },
+    { name: 'geminikim183', avatar: '🙂', color: 'blue', desc: 'VIP' },
+  ],
+  '30': [
+    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'ADMIN' },
+    { name: 'geminikim183', avatar: '🙂', color: 'purple', desc: 'PREMIUM' },
+    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'blue', desc: 'VIP' },
+  ],
+  'all': [
+    { name: 'neverlie', avatar: '😎', color: 'gold', desc: 'ADMIN' },
+    { name: "MaJleHbkuu' SnipeR", avatar: '👤', color: 'purple', desc: 'PREMIUM' },
+    { name: 'geminikim183', avatar: '🙂', color: 'blue', desc: 'PREMIUM' },
+  ],
 };
+
+// Слайды на главной
+const SLIDES = [
+  { title: 'Магазин привилегий', text: 'Приобрети привилегию на нужном сервере и наслаждайся игрой с бонусами!', link: '#/shop', btn: '↗ За покупками' },
+  { title: 'Бесплатный кейс', text: 'Каждые 2 часа — бесплатная прокрутка рулетки.', link: '#/shop?cases', btn: '🎁 К кейсам' },
+  { title: 'Наш Telegram', text: 'Новости, розыгрыши и ваучеры — первыми в нашем канале.', link: CONFIG.telegram, btn: '✈️ Подписаться', external: true },
+];
 
 const RULES = [
   'Подключаясь к игровым серверам проекта BAZA-CS2 или посещая официальный сайт проекта, вы автоматически соглашаетесь с данными правилами и обязуетесь их соблюдать.',
   'Правила проекта обязательны для всех игроков вне зависимости от возраста, пола, национальности, уровня привилегий или вероисповедания.',
-  'Игроком считается любое лицо, подключившееся к игровому серверу. Администрация наравне с игроками с привилегиями несёт ответственность за нарушение правил.',
+  'Игроком считается любое лицо, подключившееся к игровому серверу. Администрация наравне с игроками с привилегиями несёт ответственность за нарушения правил.',
   'Руководство проекта BAZA-CS2 оставляет за собой право заблокировать аккаунт участника или доступ к Discord-серверу проекта в целях поддержания порядка, даже при отсутствии прямого нарушения сформулированных правил, если поведение участника угрожает комьюнити.',
   'Правила действуют на всех игровых серверах проекта BAZA-CS2 без исключений.',
   'Администрация вправе применять наказания без предварительного предупреждения, если нарушение очевидно или носит грубый характер.',
@@ -751,142 +650,113 @@ const RULES = [
 ];
 
 const ADMINS = [
-  { n: 'Vitalik_CS', r: 'Главный администратор', b: 'OWNER' },
-  { n: 'Andrey',     r: 'Старший администратор', b: 'SR.ADMIN' },
-  { n: 'MaxPower',   r: 'Модератор', b: 'ADMIN' },
-  { n: 'Kseniya',    r: 'Модератор', b: 'ADMIN' },
+  { name: 'Vitalik_CS', role: 'Главный администратор', badge: 'OWNER' },
+  { name: 'Andrey',     role: 'Старший админ',         badge: 'SR.ADMIN' },
+  { name: 'MaxPower',   role: 'Модератор',             badge: 'ADMIN' },
+  { name: 'Kseniya',    role: 'Модератор',             badge: 'ADMIN' },
 ];
 
+// type: permanent | temp
 const BANS = [
-  { n: 'NikitkaPro', r: 'Wallhack',    a: 'Andrey',  d: '2025-11-20', p: 'permanent', pn: 'Навсегда' },
-  { n: 'ToxicBoy',   r: 'Оскорбления', a: 'Kseniya', d: '2025-11-18', p: 'temp',      pn: '7 дней' },
+  { name: 'NikitkaPro', reason: 'Wallhack',    admin: 'Andrey',  date: '2025-11-20', type: 'permanent', term: 'Навсегда' },
+  { name: 'ToxicBoy',   reason: 'Оскорбления', admin: 'Kseniya', date: '2025-11-18', type: 'temp',      term: '7 дней' },
 ];
 
-const RARITY = {
-  consumer:   { label: 'Ширпотреб',      weight: 40 },
-  industrial: { label: 'Промышленное',   weight: 30 },
-  milspec:    { label: 'Армейское',      weight: 20 },
-  restricted: { label: 'Запрещённое',    weight: 12 },
-  classified: { label: 'Засекреченное',  weight: 6 },
-  covert:     { label: 'Тайное',         weight: 3 },
-  rare:       { label: 'Редкий предмет', weight: 1 },
+const FAQS = [
+  { q: 'Как зайти на сервер?', a: `Нажми на карточку сервера на главной или введи в консоли CS2: <code>connect ${SERVERS[0].ip}</code>` },
+  { q: 'Как работают кейсы?', a: 'Бесплатный кейс можно открыть раз в 2 часа. Платные кейсы появятся после подключения оплаты.' },
+  { q: 'Как купить привилегию?', a: `Выбери привилегию в разделе «Донат» и оформи заказ через поддержку: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support}</a>` },
+];
+
+// Редкости: название и вес (чем больше вес, тем чаще выпадает)
+const RARITIES = {
+  consumer:   { name: 'Ширпотреб',     weight: 40 },
+  industrial: { name: 'Промышленное',  weight: 25 },
+  milspec:    { name: 'Армейское',     weight: 18 },
+  restricted: { name: 'Запрещённое',   weight: 10 },
+  classified: { name: 'Засекреченное', weight: 5 },
+  covert:     { name: 'Тайное',        weight: 1.5 },
+  rare:       { name: 'Редкое',        weight: 0.5 },
 };
 
-// Внимание: розыгрыш в браузере только для демо. Боевой розыгрыш должен идти на сервере.
-const CASES = {
-  free: { name: 'Бесплатный кейс', emoji: '🎁', price: 0, items: [
+const FREE_CASE = {
+  name: 'Бесплатный кейс',
+  items: [
     { name: 'P250 | Sand Dune', emoji: '🔫', rarity: 'consumer' },
-    { name: 'MP7 | Skulls', emoji: '🔫', rarity: 'industrial' },
-    { name: 'Скидка 20%', emoji: '🏷️', rarity: 'milspec' },
-    { name: 'AK-47 | Redline', emoji: '🔫', rarity: 'classified' },
-    { name: 'AWP | Asiimov', emoji: '🎯', rarity: 'covert' },
-    { name: 'VIP на 3 дня', emoji: '👑', rarity: 'rare' },
-  ]},
-  bronze: { name: 'Bronze Case', emoji: '📦', price: 99, items: [
-    { name: 'MP7 | Skulls', emoji: '🔫', rarity: 'industrial' },
-    { name: 'Glock-18 | Water Elemental', emoji: '🔫', rarity: 'restricted' },
-    { name: 'USP-S | Cortex', emoji: '🔫', rarity: 'classified' },
-    { name: 'AK-47 | Fire Serpent', emoji: '🔫', rarity: 'covert' },
-  ]},
-  silver: { name: 'Silver Case', emoji: '🥈', price: 299, items: [
-    { name: 'M4A1-S | Decimator', emoji: '🔫', rarity: 'restricted' },
-    { name: 'Deagle | Printstream', emoji: '🔫', rarity: 'classified' },
-    { name: 'AK-47 | Bloodsport', emoji: '🔫', rarity: 'covert' },
-    { name: 'Karambit | Doppler', emoji: '🔪', rarity: 'rare' },
-  ]},
-  gold: { name: 'Gold Case', emoji: '🥇', price: 799, items: [
-    { name: 'AK-47 | Vulcan', emoji: '🔫', rarity: 'classified' },
-    { name: 'M4A4 | Howl', emoji: '🔫', rarity: 'covert' },
-    { name: 'M9 Bayonet | Fade', emoji: '🔪', rarity: 'rare' },
-    { name: 'PREMIUM на 7 дней', emoji: '💎', rarity: 'rare' },
-  ]},
+    { name: 'Скидка 20%',       emoji: '🏷️', rarity: 'milspec' },
+    { name: 'AK-47 | Redline',  emoji: '🔫', rarity: 'classified' },
+    { name: 'M4A4 | Howl',      emoji: '🔫', rarity: 'covert' },
+    { name: 'AWP | Asiimov',    emoji: '🎯', rarity: 'covert' },
+    { name: 'VIP на 3 дня',     emoji: '👑', rarity: 'rare' },
+  ],
 };
+
+const PAID_CASES = [
+  { name: 'Bronze Case',    emoji: '📦', price: 99 },
+  { name: 'Silver Case',    emoji: '🥈', price: 299 },
+  { name: 'Gold Case',      emoji: '🥇', price: 799 },
+  { name: 'Legendary Case', emoji: '💎', price: 1999 },
+];
 
 const FREE_CASE_COOLDOWN = 2 * 60 * 60 * 1000;
 const FREE_CASE_KEY = 'baza_free_case_last_open';
 
 /* =====================================================================
-   УТИЛИТЫ
-   ===================================================================== */
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
-const totalOnline = () => SERVERS.reduce((sum, s) => sum + s.players, 0);
-const fmtPrice = (n) => n.toLocaleString('ru-RU') + ' ₽';
-
-let toastTimer;
-function showToast(msg, type = 'success') {
-  const t = $('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-async function copyText(text) {
-  try { await navigator.clipboard.writeText(text); }
-  catch (e) {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (_) {}
-    ta.remove();
-  }
-  showToast(`IP скопирован: ${text}`);
-}
-
-/* =====================================================================
    ШАБЛОНЫ
    ===================================================================== */
-function serverCardHtml(s) {
-  const pct = Math.round(s.players / s.max * 100);
-  const state = s.players === 0 ? 'empty' : s.players >= s.max ? 'full' : '';
-  return `
-    <div class="server-card">
-      <div class="server-bg bg-${s.bg}"></div>
-      <div class="server-content">
-        <div>
-          <div class="server-title">${esc(s.name)}</div>
-          <div class="server-map">${esc(s.map)}</div>
-        </div>
-        <div>
-          <div class="server-status ${state}">${s.players}/${s.max}${state === 'full' ? ' · полный' : ''}</div>
-          <div class="server-bar"><span style="width:${pct}%"></span></div>
-          <div class="server-actions">
-            <a class="srv-btn play" href="steam://connect/${s.ip}">▶ Играть</a>
-            <button class="srv-btn" data-copy="${s.ip}" title="Скопировать IP">IP</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(text) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return String(text).replace(/[&<>"']/g, (m) => map[m]);
 }
 
-function donatorsHtml(period) {
+function renderServer(s) {
+  const status = s.players === 0 ? 'empty' : (s.players >= s.max ? 'full' : '');
+  return `
+    <a class="server-card" href="steam://connect/${s.ip}" title="Подключиться: ${s.ip}">
+      <div class="server-bg bg-${s.bg}"></div>
+      <div class="server-content">
+        <div class="server-title">${escapeHtml(s.name)}</div>
+        <div class="server-bottom">
+          <div class="server-connect">▶ Подключиться</div>
+          <div class="server-status ${status}">${s.players}/${s.max}</div>
+        </div>
+      </div>
+    </a>`;
+}
+
+function renderDonators(period) {
   return DONATORS[period].map((d, i) => `
     <div class="donator-item">
-      <div class="donator-avatar">${esc(d.n[0].toUpperCase())}</div>
+      <div class="donator-avatar">${d.avatar}</div>
       <div class="donator-info">
-        <div class="donator-name ${d.c}">${esc(d.n)}</div>
-        <div class="donator-desc">${esc(d.d)}</div>
+        <div class="donator-name ${d.color}">${escapeHtml(d.name)}</div>
+        <div class="donator-desc">${escapeHtml(d.desc)}</div>
       </div>
       <div class="donator-rank">#${i + 1}</div>
     </div>`).join('');
 }
 
-function slideHtml(s) {
-  const ext = s.external ? ' target="_blank" rel="noopener"' : '';
-  return `<h1>${esc(s.title)}</h1><p>${esc(s.text)}</p><a href="${s.href}" class="btn-hero"${ext}>${esc(s.btn)}</a>`;
+let slideIndex = 0;
+function renderSlide(i) {
+  const s = SLIDES[i];
+  const ext = s.external ? 'target="_blank" rel="noopener"' : '';
+  return `
+    <h1>${s.title}</h1>
+    <p>${s.text}</p>
+    <a href="${s.link}" class="btn-hero" ${ext}>${s.btn}</a>`;
 }
 
-function planCardHtml(p) {
+function renderPlan(p) {
   return `
     <div class="shop-card ${p.id}">
-      ${p.hit ? '<span class="hit">ХИТ</span>' : ''}
       <div class="shop-icon">${p.icon}</div>
-      <h3>${esc(p.name)}</h3>
-      <p>${esc(p.desc)}</p>
+      <h3>${p.name}</h3>
+      <p>${p.desc}</p>
       <div class="shop-price"><span class="amount">${p.price}</span><span class="cur">₽ / мес</span></div>
-      <ul>${p.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
-      <button class="btn ${p.hit ? 'btn-primary' : 'btn-outline'}" data-buy="${p.id}">Купить</button>
+      <ul>${p.features.map((f) => `<li>${f}</li>`).join('')}</ul>
+      <button class="btn ${p.btn}" onclick="openModal('${p.id}')">Купить</button>
     </div>`;
 }
 
@@ -898,49 +768,42 @@ const pages = {};
 pages['/'] = () => `
   <div class="top-banners">
     <a class="banner-card card-base" href="${CONFIG.telegram}" target="_blank" rel="noopener">
-      <div><h3>Вступи в Telegram</h3><p>Новости и выдача ваучеров</p></div>
+      <div><h3>Вступи в Telegram</h3><p>Выдача ваучеров</p></div>
       <div class="banner-icon tg-icon">✈️</div>
     </a>
     <a class="banner-card card-base" href="${CONFIG.discord}" target="_blank" rel="noopener">
-      <div><h3>Discord сервер</h3><p>Общение, поиск тиммейтов, поддержка</p></div>
+      <div><h3>Discord сервер CS2</h3><p>Заходи к нам</p></div>
       <div class="banner-icon dc-icon">🎮</div>
     </a>
   </div>
 
   <div class="middle-grid">
-    <aside class="donators-card card-base">
-      <div class="donators-header">Топ донатеров</div>
-      <div class="donators-toggle" id="donatorsToggle">
-        <button class="active" data-period="week">7 дней</button>
-        <button data-period="month">30 дней</button>
-        <button data-period="all">Всё время</button>
+    <div class="donators-card card-base">
+      <div class="donators-header">Топ донатеров за</div>
+      <div class="donators-toggle">
+        <button class="active" data-period="7" onclick="setDonatorsPeriod('7')">7 дней</button>
+        <button data-period="30" onclick="setDonatorsPeriod('30')">30 дней</button>
+        <button data-period="all" onclick="setDonatorsPeriod('all')">Всё время</button>
       </div>
-      <div id="donatorsList">${donatorsHtml('week')}</div>
-    </aside>
+      <div id="donatorsList">${renderDonators('7')}</div>
+    </div>
 
     <div class="hero-slider">
       <div class="hero-bg"></div>
       <div class="hero-art"></div>
-      <div class="slider-dots" id="sliderDots">
-        ${SLIDES.map((_, i) => `<button data-slide="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Слайд ${i + 1}"></button>`).join('')}
-      </div>
-      <div class="hero-content" id="heroContent">${slideHtml(SLIDES[0])}</div>
+      <div class="hero-content" id="heroContent">${renderSlide(slideIndex)}</div>
       <div class="slider-arrows">
-        <button data-dir="-1" aria-label="Назад">‹</button>
-        <button data-dir="1" aria-label="Вперёд">›</button>
+        <button onclick="changeSlide(-1)" aria-label="Предыдущий слайд">‹</button>
+        <button onclick="changeSlide(1)" aria-label="Следующий слайд">›</button>
       </div>
     </div>
   </div>
 
-  <div class="section-title">
-    <h2>Наши сервера</h2>
-    <span>Сейчас играют: <b>${totalOnline()}</b></span>
-  </div>
-  <div class="servers-grid">${SERVERS.map(serverCardHtml).join('')}</div>
+  <div class="servers-grid">${SERVERS.map(renderServer).join('')}</div>
 
   <div class="bottom-desc card-base">
     <h2>Сервера Counter-Strike 2 (КС2) — BAZA-CS2</h2>
-    <p>BAZA-CS2 — проект серверов Counter-Strike 2 с мониторингом онлайна, статистикой игроков и кланами. Выберите подходящий сервер из списка выше и нажмите «Играть» — игра запустится и подключится автоматически. Если не сработало, скопируйте IP и введите в консоли <b>connect IP</b>.</p>
+    <p>BAZA-CS2 — проект серверов Counter-Strike 2 с мониторингом онлайна, скинченджером, статистикой игроков и кланами. Выберите подходящий сервер из списка выше, зайдите в игру — и поставьте любой понравившийся скин в нашем скинченджере!</p>
   </div>
 `;
 
@@ -950,37 +813,37 @@ pages['/shop'] = () => `
       <div class="page-head">
         <div class="tagline">МАГАЗИН И КЕЙСЫ</div>
         <h1>Магазин сервера</h1>
-        <p>Привилегии действуют на всех серверах проекта.</p>
+        <p>Привилегии и кейсы со скинами.</p>
       </div>
+
       <div class="shop-tabs-wrap">
         <div class="shop-tabs">
-          <button class="shop-tab active" data-tab="shop">🛒 Привилегии</button>
-          <button class="shop-tab" data-tab="cases">🎁 Кейсы <span class="tab-badge">FREE</span></button>
+          <button class="shop-tab active" data-tab="shop" onclick="switchShopTab('shop')">🛒 Магазин</button>
+          <button class="shop-tab" data-tab="cases" onclick="switchShopTab('cases')">🎁 Кейсы <span class="tab-badge">FREE</span></button>
         </div>
       </div>
 
       <div id="tab-shop" class="tab-panel">
-        <div class="shop-grid">${PLANS.map(planCardHtml).join('')}</div>
+        <div class="shop-grid">${PLANS.map(renderPlan).join('')}</div>
       </div>
 
-      <div id="tab-cases" style="display:none;">
+      <div id="tab-cases" class="tab-panel" style="display:none;">
         <div class="cases-hero">
-          <div>
+          <div class="cases-hero-info">
             <h2>Бесплатный кейс</h2>
             <p style="color:var(--muted);">Раз в 2 часа — крути рулетку и получай приз.</p>
             <div class="free-timer" id="freeTimer"></div>
-            <button class="btn btn-primary" id="freeCaseBtn" data-case="free" style="padding:14px 28px;">🎁 Открыть</button>
+            <button class="btn btn-primary" id="freeCaseBtn" onclick="openCase()" style="padding:14px 28px;">🎁 Открыть</button>
           </div>
           <div class="big-case">🎁</div>
         </div>
         <div class="case-grid">
-          ${Object.entries(CASES).filter(([id]) => id !== 'free').map(([id, c]) => `
-            <div class="case-card card-base">
+          ${PAID_CASES.map((c) => `
+            <div class="case-card">
               <div class="case-visual">${c.emoji}</div>
-              <h3>${esc(c.name)}</h3>
-              <div class="case-count">${c.items.length} предмета</div>
-              <div class="case-price">${fmtPrice(c.price)}</div>
-              <button class="btn btn-primary" data-case="${id}">Открыть</button>
+              <h3>${c.name}</h3>
+              <div class="case-price">${c.price} ₽</div>
+              <button class="btn btn-outline" onclick="showToast('Платные кейсы появятся после подключения оплаты', 'error')">Скоро</button>
             </div>`).join('')}
         </div>
       </div>
@@ -993,14 +856,14 @@ pages['/rules'] = () => `
     <div class="container">
       <div class="page-head">
         <div class="tagline">ПОРЯДОК</div>
-        <h1>Правила проекта</h1>
+        <h1>Правила сервера</h1>
         <p>Незнание правил не освобождает от ответственности.</p>
       </div>
       <div class="rules-list">
         ${RULES.map((text, i) => `
-          <div class="rule-item card-base">
+          <div class="rule-item">
             <div class="rule-num">${i + 1}</div>
-            <p>${esc(text)}</p>
+            <div class="rule-content"><p>${text}</p></div>
           </div>`).join('')}
       </div>
     </div>
@@ -1013,29 +876,21 @@ pages['/admins'] = () => `
       <div class="page-head">
         <div class="tagline">КОМАНДА</div>
         <h1>Администрация</h1>
-        <p>По вопросам наказаний и жалоб пишите в Telegram или Discord.</p>
       </div>
       <div class="admins-grid">
-        ${ADMINS.map(a => `
-          <div class="admin-card card-base">
-            <div class="admin-avatar">${esc(a.n[0].toUpperCase())}</div>
+        ${ADMINS.map((a) => `
+          <div class="admin-card">
+            <div class="admin-avatar">${escapeHtml(a.name[0].toUpperCase())}</div>
             <div class="admin-info">
-              <h4>${esc(a.n)}</h4><p>${esc(a.r)}</p>
-              <span class="admin-badge ${a.b === 'OWNER' ? 'owner' : ''}">${esc(a.b)}</span>
+              <h4>${escapeHtml(a.name)}</h4>
+              <p>${a.role}</p>
+              <span class="admin-badge">${a.badge}</span>
             </div>
           </div>`).join('')}
       </div>
     </div>
   </section>
 `;
-
-const FAQS = [
-  { q: 'Как зайти на сервер?', a: `Нажмите «Играть» на карточке сервера на главной — CS2 подключится сам. Или откройте консоль (~) и введите <code>connect IP</code>. Адреса серверов:<br>${SERVERS.map(s => `${esc(s.name)} — <code>${s.ip}</code>`).join('<br>')}` },
-  { q: 'Как работают кейсы?', a: 'Бесплатный кейс можно открывать раз в 2 часа. Платные кейсы открываются без ограничений.' },
-  { q: 'Как оплатить привилегию?', a: 'СБП, банковские карты, ЮMoney. Привилегия выдаётся автоматически после оплаты.' },
-  { q: 'Меня забанили, что делать?', a: `Найдите себя в разделе «Баны» и напишите в поддержку: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support.replace('https://t.me/', '@')}</a>. Укажите ник и Steam ID.` },
-  { q: 'Как пожаловаться на игрока?', a: 'Напишите в Telegram или Discord: ник нарушителя, сервер, время и по возможности демо или видео.' },
-];
 
 pages['/faq'] = () => `
   <section class="inner-page">
@@ -1045,31 +900,15 @@ pages['/faq'] = () => `
         <h1>Частые вопросы</h1>
       </div>
       <div class="faq">
-        ${FAQS.map(f => `
-          <div class="faq-item card-base">
-            <button class="faq-q">${esc(f.q)}<span class="arrow">+</span></button>
+        ${FAQS.map((f) => `
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">${f.q}<span class="arrow">+</span></button>
             <div class="faq-a">${f.a}</div>
           </div>`).join('')}
-      </div>
-      <div class="faq-footer">
-        Не нашли ответ?<br>
-        <a class="btn btn-primary" href="${CONFIG.support}" target="_blank" rel="noopener">✈️ Написать в поддержку</a>
       </div>
     </div>
   </section>
 `;
-
-function bansRowsHtml(list) {
-  if (!list.length) return '<tr><td colspan="5" class="bans-empty">Ничего не найдено</td></tr>';
-  return list.map(b => `
-    <tr>
-      <td style="font-weight:700;">${esc(b.n)}</td>
-      <td style="color:var(--muted);">${esc(b.r)}</td>
-      <td>${esc(b.a)}</td>
-      <td style="color:var(--muted);">${esc(b.d)}</td>
-      <td><span class="ban-perm ${b.p}">${esc(b.pn)}</span></td>
-    </tr>`).join('');
-}
 
 pages['/bans'] = () => `
   <section class="inner-page">
@@ -1078,11 +917,19 @@ pages['/bans'] = () => `
         <div class="tagline">МОДЕРАЦИЯ</div>
         <h1>Список банов</h1>
       </div>
-      <div class="bans-tools"><input type="search" id="banSearch" placeholder="Поиск по нику..."></div>
-      <div class="bans-wrap card-base">
+      <div class="bans-wrap">
         <table class="bans-table">
           <thead><tr><th>Игрок</th><th>Причина</th><th>Админ</th><th>Дата</th><th>Срок</th></tr></thead>
-          <tbody id="bansBody">${bansRowsHtml(BANS)}</tbody>
+          <tbody>
+            ${BANS.map((b) => `
+              <tr>
+                <td style="font-weight:700;">${escapeHtml(b.name)}</td>
+                <td style="color:var(--muted);">${escapeHtml(b.reason)}</td>
+                <td>${escapeHtml(b.admin)}</td>
+                <td style="color:var(--muted);">${b.date}</td>
+                <td><span class="ban-perm ${b.type}">${b.term}</span></td>
+              </tr>`).join('')}
+          </tbody>
         </table>
       </div>
     </div>
@@ -1090,11 +937,13 @@ pages['/bans'] = () => `
 `;
 
 pages['/404'] = () => `
-  <div class="page-head" style="padding-top:100px;">
-    <h1 style="font-size:120px;color:var(--accent-light);">404</h1>
-    <p>Страница не найдена</p>
-    <div style="margin-top:30px;"><a href="#/" class="btn btn-primary" style="padding:14px 28px;">← На главную</a></div>
-  </div>
+  <section class="inner-page">
+    <div class="page-head" style="padding-top:60px;">
+      <h1 style="font-size:120px;color:var(--accent-light);">404</h1>
+      <p>Страница не найдена</p>
+      <div style="margin-top:30px;"><a href="#/" class="btn btn-primary" style="padding:14px 28px;">← На главную</a></div>
+    </div>
+  </section>
 `;
 
 /* =====================================================================
@@ -1102,18 +951,20 @@ pages['/404'] = () => `
    ===================================================================== */
 const pageRoot = $('page-root');
 let currentPath = null;
+let leaveTimer = null;
 
 function parseHash() {
   const raw = location.hash.replace(/^#/, '') || '/';
-  const [path, query = ''] = raw.split('?');
-  return { path, query };
+  const [path, query] = raw.split('?');
+  return { path: path || '/', query: query || '' };
 }
 
-function renderPage(animate = true) {
+function renderPage(animate) {
   let { path, query } = parseHash();
   if (!pages[path]) path = '/404';
 
-  const doRender = () => {
+  const draw = () => {
+    if (path === '/') slideIndex = 0;
     pageRoot.className = path === '/' ? 'main-container' : '';
     pageRoot.innerHTML = pages[path]();
     if (animate) {
@@ -1122,69 +973,293 @@ function renderPage(animate = true) {
       setTimeout(() => pageRoot.classList.remove('entering'), 750);
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
-
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.route === path));
-    document.title = path === '/' ? 'BAZA — сервера Counter-Strike 2' : `BAZA — ${pageRoot.querySelector('h1')?.textContent || ''}`;
-
-    stopSlider(); stopFreeTimer();
-    if (path === '/') startSlider();
+    document.querySelectorAll('.nav-links a').forEach((a) => {
+      a.classList.toggle('active', a.dataset.route === path);
+    });
+    stopFreeTimer();
     if (path === '/shop' && query === 'cases') switchShopTab('cases');
     currentPath = path;
   };
 
-  if (!currentPath || !animate) return doRender();
+  if (!animate || currentPath === null) return draw();
+  clearTimeout(leaveTimer);
   pageRoot.classList.add('leaving');
-  setTimeout(() => { pageRoot.classList.remove('leaving'); doRender(); }, 340);
+  leaveTimer = setTimeout(draw, 340);
 }
 
-window.addEventListener('hashchange', () => renderPage(true));
+/* =====================================================================
+   ГЛАВНАЯ: донатеры и слайдер
+   ===================================================================== */
+function setDonatorsPeriod(period) {
+  document.querySelectorAll('.donators-toggle button').forEach((b) => {
+    b.classList.toggle('active', b.dataset.period === period);
+  });
+  $('donatorsList').innerHTML = renderDonators(period);
+}
+
+function changeSlide(dir) {
+  slideIndex = (slideIndex + dir + SLIDES.length) % SLIDES.length;
+  const el = $('heroContent');
+  el.innerHTML = renderSlide(slideIndex);
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = '';
+}
 
 /* =====================================================================
-   ОБРАБОТЧИКИ (делегирование)
+   FAQ
    ===================================================================== */
-document.addEventListener('click', (e) => {
-  const t = e.target;
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  document.querySelectorAll('.faq-item').forEach((i) => { if (i !== item) i.classList.remove('open'); });
+  item.classList.toggle('open');
+}
 
-  const copyBtn = t.closest('[data-copy]');
-  if (copyBtn) return copyText(copyBtn.dataset.copy);
+/* =====================================================================
+   ТОСТ
+   ===================================================================== */
+let toastTimer;
+function showToast(msg, type) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', type === 'error');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-  const period = t.closest('#donatorsToggle button');
-  if (period) {
-    document.querySelectorAll('#donatorsToggle button').forEach(b => b.classList.toggle('active', b === period));
-    $('donatorsList').innerHTML = donatorsHtml(period.dataset.period);
+/* =====================================================================
+   ЗАКАЗ ПРИВИЛЕГИИ
+   ===================================================================== */
+const overlay = $('modalOverlay');
+let currentPlan = null;
+
+function openModal(planId) {
+  currentPlan = PLANS.find((p) => p.id === planId);
+  if (!currentPlan) return;
+  $('orderPeriod').value = '1';
+  updateModalPrice();
+  overlay.classList.add('active');
+  $('orderSteam').focus();
+}
+
+function updateModalPrice() {
+  if (!currentPlan) return;
+  const months = Number($('orderPeriod').value);
+  const total = months === 3 ? Math.round(currentPlan.price * 3 * 0.9) : currentPlan.price;
+  $('modalPlan').textContent = `${currentPlan.name} — ${total} ₽`;
+}
+
+function closeModal() { overlay.classList.remove('active'); }
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+function submitOrder() {
+  const steam = $('orderSteam').value.trim();
+  if (!steam) {
+    showToast('Укажите Steam ID или ссылку на профиль', 'error');
+    $('orderSteam').focus();
     return;
   }
+  closeModal();
+  showToast(`Напишите в поддержку для оформления ${currentPlan.name}`);
+  window.open(CONFIG.support, '_blank', 'noopener');
+  $('orderSteam').value = '';
+  $('orderContact').value = '';
+}
 
-  const arrow = t.closest('.slider-arrows button');
-  if (arrow) { setSlide(slideIndex + Number(arrow.dataset.dir)); restartSliderTimer(); return; }
-  const dot = t.closest('#sliderDots button');
-  if (dot) { setSlide(Number(dot.dataset.slide)); restartSliderTimer(); return; }
+/* =====================================================================
+   МАГАЗИН: вкладки
+   ===================================================================== */
+function switchShopTab(tab) {
+  const shopDiv = $('tab-shop');
+  const casesDiv = $('tab-cases');
+  if (!shopDiv || !casesDiv) return;
+  document.querySelectorAll('.shop-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
+  shopDiv.style.display = tab === 'shop' ? 'block' : 'none';
+  casesDiv.style.display = tab === 'cases' ? 'block' : 'none';
+  if (tab === 'cases') startFreeTimer(); else stopFreeTimer();
+}
 
-  const faq = t.closest('.faq-q');
-  if (faq) {
-    const item = faq.parentElement;
-    document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
-    item.classList.toggle('open');
-    return;
+/* =====================================================================
+   БЕСПЛАТНЫЙ КЕЙС
+   Внимание: таймер в localStorage и розыгрыш в браузере легко обойти.
+   Для реальной выдачи призов розыгрыш нужно перенести на сервер.
+   ===================================================================== */
+function getLastFreeOpen() { try { return Number(localStorage.getItem(FREE_CASE_KEY)) || 0; } catch (e) { return 0; } }
+function setLastFreeOpen(ts) { try { localStorage.setItem(FREE_CASE_KEY, String(ts)); } catch (e) {} }
+function canOpenFree() { return Date.now() - getLastFreeOpen() >= FREE_CASE_COOLDOWN; }
+
+let freeTimerInterval = null;
+function startFreeTimer() {
+  stopFreeTimer();
+  const el = $('freeTimer');
+  const btn = $('freeCaseBtn');
+  if (!el) return;
+
+  const update = () => {
+    if (canOpenFree()) {
+      el.innerHTML = '<div style="color:var(--green);font-weight:700;font-size:15px;">Готов к открытию!</div>';
+      if (btn) { btn.disabled = false; btn.textContent = '🎁 Открыть'; }
+      stopFreeTimer();
+      return;
+    }
+    const remaining = FREE_CASE_COOLDOWN - (Date.now() - getLastFreeOpen());
+    const h = Math.floor(remaining / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    const cell = (n, l) => `<div class="timer-cell"><div class="num">${String(n).padStart(2, '0')}</div><div class="lbl">${l}</div></div>`;
+    el.innerHTML = cell(h, 'час') + cell(m, 'мин') + cell(s, 'сек');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Скоро'; }
+  };
+  update();
+  if (!canOpenFree()) freeTimerInterval = setInterval(update, 1000);
+}
+function stopFreeTimer() {
+  if (freeTimerInterval) { clearInterval(freeTimerInterval); freeTimerInterval = null; }
+}
+
+function pickWeighted(items) {
+  const total = items.reduce((sum, it) => sum + RARITIES[it.rarity].weight, 0);
+  let r = Math.random() * total;
+  for (const it of items) {
+    r -= RARITIES[it.rarity].weight;
+    if (r <= 0) return it;
   }
+  return items[items.length - 1];
+}
 
-  const tab = t.closest('.shop-tab');
-  if (tab) return switchShopTab(tab.dataset.tab);
+const caseModal = $('caseModal');
+let caseAnimTimer = null;
+let spinning = false;
 
-  const buy = t.closest('[data-buy]');
-  if (buy) return openModal(buy.dataset.buy);
+function openCase() {
+  if (!canOpenFree()) { showToast('Бесплатный кейс ещё не готов!', 'error'); return; }
+  setLastFreeOpen(Date.now()); // фиксируем сразу, чтобы нельзя было закрыть и открыть снова
+  spinning = true;
 
-  const caseBtn = t.closest('[data-case]');
-  if (caseBtn) return openCase(caseBtn.dataset.case);
-});
+  const items = FREE_CASE.items;
+  const track = $('rouletteTrack');
+  const result = $('rouletteResult');
+  const closeBtn = $('closeCaseBtn');
+  $('rouletteCaseName').textContent = FREE_CASE.name;
 
-document.addEventListener('input', (e) => {
-  if (e.target.id === 'banSearch') {
-    const q = e.target.value.trim().toLowerCase();
-    $('bansBody').innerHTML = bansRowsHtml(BANS.filter(b => b.n.toLowerCase().includes(q)));
+  result.classList.remove('show');
+  closeBtn.style.display = 'none';
+  track.classList.remove('animate');
+  track.style.transform = 'translateX(0)';
+
+  const win = pickWeighted(items);
+  const TOTAL = 60, WIN_INDEX = 52;
+  const strip = [];
+  for (let i = 0; i < TOTAL; i++) {
+    strip.push(i === WIN_INDEX ? win : items[Math.floor(Math.random() * items.length)]);
   }
-});
+  track.innerHTML = strip.map((it) => `
+    <div class="roulette-item rar-${it.rarity}">
+      <div class="item-emoji">${it.emoji}</div>
+      <div class="item-name">${it.name}</div>
+    </div>`).join('');
 
+  caseModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const wrap = track.parentElement;
+      const winEl = track.children[WIN_INDEX];
+      const jitter = (Math.random() - 0.5) * winEl.offsetWidth * 0.7;
+      const offset = wrap.clientWidth / 2 - (winEl.offsetLeft + winEl.offsetWidth / 2) + jitter;
+      track.classList.add('animate');
+      track.style.transform = `translateX(${offset}px)`;
+
+      caseAnimTimer = setTimeout(() => {
+        $('resEmoji').textContent = win.emoji;
+        $('resName').textContent = win.name;
+        $('resRarity').textContent = RARITIES[win.rarity].name;
+        $('resultCard').style.borderColor = `var(--r-${win.rarity})`;
+        result.classList.add('show');
+        closeBtn.style.display = 'inline-flex';
+        spinning = false;
+        spawnConfetti();
+        startFreeTimer();
+      }, 5200);
+    });
+  });
+}
+
+function closeCaseModal() {
+  if (spinning) return;
+  caseModal.classList.remove('active');
+  document.body.style.overflow = '';
+  clearTimeout(caseAnimTimer);
+}
+
+function spawnConfetti() {
+  const colors = ['#a855f7', '#c084fc', '#d946ef', '#8b5cf6', '#22d3ee'];
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.style.cssText = `position:fixed;top:-20px;width:9px;height:13px;z-index:600;pointer-events:none;
+      left:${Math.random() * 100}vw;background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation:confettiFall ${2 + Math.random() * 1.5}s linear forwards;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+/* =====================================================================
+   ЧАТ: живого оператора нет, поэтому чат честно направляет в Telegram
+   ===================================================================== */
+const chatWidget = $('chatWidget');
+const chatFab = $('chatFab');
+const chatMessages = $('chatMessages');
+const chatInput = $('chatInput');
+
+function toggleChat() {
+  const open = !chatWidget.classList.contains('active');
+  chatWidget.classList.toggle('active', open);
+  chatFab.classList.toggle('open', open);
+  chatFab.textContent = open ? '×' : '💬';
+  if (open) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (window.innerWidth > 768) chatInput.focus();
+  }
+}
+
+function addChatMessage(html, sender) {
+  const div = document.createElement('div');
+  div.className = `chat-msg ${sender}`;
+  const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `<div class="msg-bubble">${html}</div><div class="msg-time">${time}</div>`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function sendChatMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addChatMessage(escapeHtml(text), 'user'); // текст пользователя всегда экранируем
+  chatInput.value = '';
+  setTimeout(() => {
+    addChatMessage(`Онлайн-чат пока не подключён. Напишите нам в Telegram, там отвечают администраторы: <a href="${CONFIG.support}" target="_blank" rel="noopener">${CONFIG.support}</a>`, 'support');
+  }, 600);
+}
+
+/* =====================================================================
+   ЗАПУСК
+   ===================================================================== */
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (caseModal.classList.cont
+  closeModal();
+  closeCaseModal();
+  if (chatWidget.classList.contains('active')) toggleChat();
+});
+
+$('navOnline').textContent = SERVERS.reduce((sum, s) => sum + s.players, 0);
+addChatMessage('Привет! По вопросам покупок и банов пишите сюда или сразу в Telegram.', 'support');
+
+window.addEventListener('hashchange', () => renderPage(true));
+renderPage(false);
+</script>
+
+</body>
+</html>
